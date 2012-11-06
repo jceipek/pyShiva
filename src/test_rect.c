@@ -1,5 +1,7 @@
 #include "test_rect.h"
 
+#define WIDTH 500
+#define HEIGHT 500
 VGPath rect;
 
 void testCleanup(void)
@@ -11,6 +13,10 @@ void testCleanup(void)
 
 void refresh(void)
 {  
+	VGfloat magenta[] = {1,0,1,1};
+	vgSetfv(VG_CLEAR_COLOR, 4, magenta);
+	vgClear(0,0,WIDTH, HEIGHT);
+	 
 	vgLoadIdentity();
 	vgTranslate(100,100);
 	vgDrawPath(rect, VG_FILL_PATH);
@@ -50,7 +56,7 @@ int main(int argc, char **argv){
 	VGPaint fill;
 	VGfloat white[] = {1,1,1,1};
 	
-	create_window(argc, argv, 500,500, "HELLO");
+	create_window(argc, argv, WIDTH, HEIGHT, "HELLO");
 	
 	fill = vgCreatePaint();
     vgSetParameterfv(fill, VG_PAINT_COLOR, 4, white);
