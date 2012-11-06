@@ -32,6 +32,13 @@ VGPath testCreatePath()
                       1,0,0,0, VG_PATH_CAPABILITY_ALL);
 }
 
+void keyboardHandler(unsigned char key, int x, int y)
+{
+	if (key == 27)
+		exit(0);
+		
+}
+
 
 void create_window(int argc, char**argv, int w, int h, const char *title){
 	glutInit(&argc, argv);
@@ -45,6 +52,7 @@ void create_window(int argc, char**argv, int w, int h, const char *title){
 	glutCreateWindow(title);
 	
 	glutDisplayFunc(refresh);
+	glutKeyboardFunc(keyboardHandler);
 	
 	atexit(testCleanup);
 	
