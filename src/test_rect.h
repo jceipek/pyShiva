@@ -23,4 +23,4 @@
 #include <vg/openvg.h>
 #include <vg/vgu.h>
 
-void create_window(int w, int h, const char *title);
+void create_window(int argc, char**argv, int w, int h, const char *title);

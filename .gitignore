@@ -2,3 +2,5 @@ Debug
 Release
 *.ncb
 *.vcproj.*.user
+*.o
+*.lo
