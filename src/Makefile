@@ -5,7 +5,7 @@ INCLUDE_FLAGS = -I. -I../include -I/usr/local/include -L/usr/local/lib
 ifeq ($(OS), Linux)
 	# We are on Linux
 	CC = gcc
-	GL_FLAGS := "-lglut -lGL -lGLU"
+	GL_FLAGS = -lglut -lGL -lGLU
 endif
 ifeq ($(OS), Darwin)
 	# We are on OSX
@@ -14,4 +14,4 @@ ifeq ($(OS), Darwin)
 endif
 
 test_rect: test_rect.c
-	CC test_rect.c *.o $(GL_FLAGS) $(INCLUDE_FLAGS) -o test_rect
+	$(CC) test_rect.c *.o $(GL_FLAGS) $(INCLUDE_FLAGS) -o test_rect
