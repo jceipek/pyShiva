@@ -75,7 +75,7 @@ int main(int argc, char **argv){
 	vguRect(rect, -50,-30, 100,60);
 	
 	glutMainLoop();
-	return 0;	
+	return 0;
 }
 
 

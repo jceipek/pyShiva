@@ -51,7 +51,7 @@ void createPrimitives()
   primitives[2] = polyClosed;
   
   rect = testCreatePath();
-  vguRect(rect, -50,-30, 100,60);
+  vguRect(rect, -50,-30, 200,60);
   primitives[3] = rect;
   
   rectRound = testCreatePath();
@@ -59,7 +59,7 @@ void createPrimitives()
   primitives[4] = rectRound;
   
   ellipse = testCreatePath();
-  vguEllipse(ellipse, 0,0, 100, 60);
+  vguEllipse(ellipse, 25,50, 100, 100);
   primitives[5] = ellipse;
   
   arcOpen = testCreatePath();

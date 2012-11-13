@@ -26,3 +26,4 @@
 void create_window(int argc, char**argv, int w, int h, const char *title);
 void refresh(void);
 void testCleanup(void);
+int main2(int argc, char **argv);
