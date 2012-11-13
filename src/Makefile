@@ -10,7 +10,7 @@ endif
 ifeq ($(OS), Darwin)
 	# We are on OSX
 	CC = clang
-	GL_FLAGS = -framework GLUT -framework OpenGL -framework Cocoa
+	GL_FLAGS = -g -framework GLUT -framework OpenGL -framework Cocoa
 endif
 
 test_rect: test_rect.c
