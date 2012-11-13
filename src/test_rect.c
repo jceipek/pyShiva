@@ -61,24 +61,21 @@ void create_window(int argc, char**argv, int w, int h, const char *title){
 }
 
 int main(int argc, char **argv){
-	VGPaint fill;
-	VGfloat white[] = {1,1,1,1};
+	VGPaint fill; //declare an object that is filled
+	VGfloat white[] = {1,1,1,1}; //declare an object to represents the collor white
 	
-	create_window(argc, argv, WIDTH, HEIGHT, "HELLO");
+	create_window(argc, argv, WIDTH, HEIGHT, "HELLO"); //make a window
+	//hello is the header text
 	
-	fill = vgCreatePaint();
-    vgSetParameterfv(fill, VG_PAINT_COLOR, 4, white);
+	fill = vgCreatePaint();// actually make the fill object
+    vgSetParameterfv(fill, VG_PAINT_COLOR, 4, white); //change fill to be white
     vgSetPaint(fill, VG_FILL_PATH);
 	
 	rect = testCreatePath();
 	vguRect(rect, -50,-30, 100,60);
 	
 	glutMainLoop();
-	return 0;
-	
-	
-	
-	
+	return 0;	
 }
 
 
