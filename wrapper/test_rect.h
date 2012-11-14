@@ -18,7 +18,7 @@
 #  include <GL/glut.h>
 #endif
 
-#include "GL/glext.h"
+#include "../src/GL/glext.h"
 
 #include <vg/openvg.h>
 #include <vg/vgu.h>
