@@ -69,7 +69,8 @@ Window_init(Window *self, PyObject *args, PyObject *kwds)
     // Now actually create the window!
     char *argv[1];
     argv[0] = "";
-    create_window(1, argv, self->width, self->height, PyString_AS_STRING(self->title));
+    create_window(1, argv, self->width, self->height, self->pos_x, self->pos_y,
+        PyString_AS_STRING(self->title));
 
     glutMainLoop();
 
@@ -177,8 +178,7 @@ static PyMethodDef pyshiva_methods[] = {
 #define PyMODINIT_FUNC void
 #endif
 PyMODINIT_FUNC
-initpyshiva(void)
-{
+initpyshiva(void) {
     PyObject* m;
 
     if (PyType_Ready(&WindowType) < 0)

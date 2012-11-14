@@ -23,7 +23,8 @@
 #include <vg/openvg.h>
 #include <vg/vgu.h>
 
-void create_window(int argc, char**argv, int w, int h, const char *title);
+void create_window(int argc, char**argv, int w, int h, int pos_x, int pos_y, const char *title);
 void refresh(void);
 void testCleanup(void);
+void close_window();
 int main2(int argc, char **argv);

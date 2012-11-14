@@ -6,9 +6,22 @@ VGPath rect;
 
 void testCleanup(void)
 {
-  
+  printf("Cleaning up vgContext before quitting!\n");
   vgDestroyContextSH();
 
+}
+
+VGPath testCreatePath()
+{
+  return vgCreatePath(VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F,
+                      1,0,0,0, VG_PATH_CAPABILITY_ALL);
+}
+
+void keyboardHandler(unsigned char key, int x, int y)
+{
+	// If the ESC key is pressed
+	if (key == 27)
+		close_window();		
 }
 
 void refresh(void)
@@ -22,49 +35,38 @@ void refresh(void)
 	vgDrawPath(rect, VG_FILL_PATH);
 	/* Swap */
 	glutSwapBuffers();
-
-	
 }
 
-VGPath testCreatePath()
-{
-  return vgCreatePath(VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F,
-                      1,0,0,0, VG_PATH_CAPABILITY_ALL);
+void close_window() {
+	printf("Close Called\n");
+	glutDestroyWindow(glutGetWindow());
+	exit(0);
 }
 
-void keyboardHandler(unsigned char key, int x, int y)
-{
-	if (key == 27)
-		exit(0);
-		
-}
-
-
-void create_window(int argc, char**argv, int w, int h, const char *title){
+void create_window(int argc, char**argv, int w, int h, int pos_x, int pos_y, const char *title) {
 	glutInit(&argc, argv);
 	
 	glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_ALPHA | 
 						GLUT_STENCIL | GLUT_MULTISAMPLE);
-	
-	
-	glutInitWindowPosition(0,0);
-	glutInitWindowSize(w,h);
+
+	glutInitWindowPosition(pos_x, pos_y);
+	glutInitWindowSize(w, h);
 	glutCreateWindow(title);
 	
 	glutDisplayFunc(refresh);
 	glutKeyboardFunc(keyboardHandler);
+	//glutCloseFunc(close_window);
 	
-	atexit(testCleanup);
+	//atexit(testCleanup);
 	
 	vgCreateContextSH(w,h);
-	
 }
 
 int main2(int argc, char **argv){
 	VGPaint fill; //declare an object that is filled
 	VGfloat white[] = {1,1,1,1}; //declare an object to represents the collor white
-	
-	create_window(argc, argv, WIDTH, HEIGHT, "HELLO"); //make a window
+
+	create_window(argc, argv, WIDTH, HEIGHT, 0, 0, "HELLO"); //make a window
 	//hello is the header text
 	
 	fill = vgCreatePaint();// actually make the fill object

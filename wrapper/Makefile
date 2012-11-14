@@ -13,5 +13,5 @@ ifeq ($(OS), Darwin)
 	GL_FLAGS = -g -framework GLUT -framework OpenGL -framework Cocoa
 endif
 
-test_rect: test_rect_caller.c
-	$(CC) test_rect.c test_rect_caller.c *.o $(INCLUDE_FLAGS) $(GL_FLAGS) -o test_rect
+test_wrapper: wrapper.c
+	$(CC) wrapper.c wrapper_caller.c ../src/*.o $(INCLUDE_FLAGS) $(GL_FLAGS) -o test_wrapper
