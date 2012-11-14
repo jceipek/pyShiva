@@ -60,7 +60,7 @@ void create_window(int argc, char**argv, int w, int h, const char *title){
 	
 }
 
-int main(int argc, char **argv){
+int main2(int argc, char **argv){
 	VGPaint fill; //declare an object that is filled
 	VGfloat white[] = {1,1,1,1}; //declare an object to represents the collor white
 	

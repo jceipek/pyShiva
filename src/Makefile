@@ -14,4 +14,4 @@ ifeq ($(OS), Darwin)
 endif
 
 test_rect: test_rect_caller.c
-	$(CC) test_rect.c test_rect_caller.c *.o  $(INCLUDE_FLAGS) -o test_rect $(GL_FLAGS)
+	$(CC) test_rect.c test_rect_caller.c *.o $(INCLUDE_FLAGS) -o test_rect $(GL_FLAGS)
