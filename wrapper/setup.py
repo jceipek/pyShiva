@@ -8,21 +8,23 @@ if sys.platform.startswith('darwin'):
 	os.environ['LDFLAGS'] = '-g -framework GLUT -framework OpenGL -framework Cocoa'
 elif sys.platform.startswith('linux'):
 	libraries.extend(['glut', 'GL', 'GLU'])
+
 	extra_objects.extend([
-		'libOpenVG_la-shArrays.o',
-		'libOpenVG_la-shContext.o',
-		'libOpenVG_la-shExtensions.o',
-		'libOpenVG_la-shGeometry.o',
-		'libOpenVG_la-shImage.o',
-		'libOpenVG_la-shPaint.o',
-		'libOpenVG_la-shParams.o',
-		'libOpenVG_la-shPath.o',
-		'libOpenVG_la-shPipeline.o',
-		'libOpenVG_la-shVectors.o',
-		'libOpenVG_la-shVgu.o'])
+		'../src/libOpenVG_la-shArrays.o',
+		'../src/libOpenVG_la-shContext.o',
+		'../src/libOpenVG_la-shExtensions.o',
+		'../src/libOpenVG_la-shGeometry.o',
+		'../src/libOpenVG_la-shImage.o',
+		'../src/libOpenVG_la-shPaint.o',
+		'../src/libOpenVG_la-shParams.o',
+		'../src/libOpenVG_la-shPath.o',
+		'../src/libOpenVG_la-shPipeline.o',
+		'../src/libOpenVG_la-shVectors.o',
+		'../src/libOpenVG_la-shVgu.o'])
+
  
 pyshiva_module = Extension('rect', 
-	include_dirs = ['.','../include','/usr/local/include'],
+	include_dirs = ['../include'],
 	sources = ['test_rect.c','pyShivamodule.c'],
 	libraries = libraries,
 	extra_objects = extra_objects)
