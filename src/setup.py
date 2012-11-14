@@ -22,7 +22,7 @@ elif sys.platform.startswith('linux'):
 		'libOpenVG_la-shVgu.o'])
  
 pyshiva_module = Extension('rect', 
-	include_dirs = ['../src', '../include', '/usr/local/include'],
+	include_dirs = ['../include'],
 	sources = ['test_rect.c','pyShivamodule.c'],
 	libraries = libraries,
 	extra_objects = extra_objects)

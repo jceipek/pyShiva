@@ -4,8 +4,10 @@ import os, sys
 
 libraries = ['OpenVG']
 extra_objects = list()
+
 if sys.platform.startswith('darwin'):
 	os.environ['LDFLAGS'] = '-g -framework GLUT -framework OpenGL -framework Cocoa'
+
 elif sys.platform.startswith('linux'):
 	libraries.extend(['glut', 'GL', 'GLU'])
 
@@ -23,13 +25,13 @@ elif sys.platform.startswith('linux'):
 		'../src/libOpenVG_la-shVgu.o'])
 
  
-pyshiva_module = Extension('rect', 
+pyshiva_module = Extension('pyshiva',
 	include_dirs = ['../include'],
-	sources = ['test_rect.c','pyShivamodule.c'],
+	sources = ['wrapper.c','pyShivamodule.c'],
 	libraries = libraries,
 	extra_objects = extra_objects)
 
-setup (name = 'pyShiva',
+setup (name = 'pyshiva',
         version = '1.0',
         description = 'Test package for pyShiva',
         ext_modules = [pyshiva_module])
