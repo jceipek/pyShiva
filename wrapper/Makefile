@@ -10,8 +10,8 @@ endif
 ifeq ($(OS), Darwin)
 	# We are on OSX
 	CC = clang
-	GL_FLAGS = -g ../glfw-2.7.7/lib/cocoa/libglfw.a -framework OpenGL -framework Cocoa -framework IOKit
+	GL_FLAGS = -g ../glfw-2.7.7/lib/cocoa/libglfw.a ../ShivaVG/src/libOpenVG.a -framework OpenGL -framework Cocoa -framework IOKit
 endif
 
 test_wrapper: wrapper.c
-	$(CC) wrapper.c wrapper_caller.c ../ShivaVG/src/*.o $(INCLUDE_FLAGS) $(GL_FLAGS) -o test_wrapper
+	$(CC) wrapper.c wrapper_caller.c $(INCLUDE_FLAGS) $(GL_FLAGS) -o test_wrapper
