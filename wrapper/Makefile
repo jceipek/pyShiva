@@ -1,6 +1,6 @@
 OS := $(shell uname)
 
-INCLUDE_FLAGS = -I. -I../include -I/usr/local/include
+INCLUDE_FLAGS = -I. -I../ShivaVG/include -I/usr/local/include
 
 ifeq ($(OS), Linux)
 	# We are on Linux
@@ -10,8 +10,8 @@ endif
 ifeq ($(OS), Darwin)
 	# We are on OSX
 	CC = clang
-	GL_FLAGS = -g -framework GLUT -framework OpenGL -framework Cocoa
+	GL_FLAGS = -g ../glfw-2.7.7/lib/cocoa/libglfw.a -framework OpenGL -framework Cocoa -framework IOKit
 endif
 
 test_wrapper: wrapper.c
-	$(CC) wrapper.c wrapper_caller.c ../src/*.o $(INCLUDE_FLAGS) $(GL_FLAGS) -o test_wrapper
+	$(CC) wrapper.c wrapper_caller.c ../ShivaVG/src/*.o $(INCLUDE_FLAGS) $(GL_FLAGS) -o test_wrapper

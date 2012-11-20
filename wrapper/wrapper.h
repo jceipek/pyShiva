@@ -11,7 +11,7 @@
 #if defined(__APPLE__)
 #  include <OpenGL/gl.h>
 #  include <OpenGL/glu.h>
-#  include <GLUT/glut.h>
+#  include <GL/glfw.h>
 #else
 #  include <GL/gl.h>
 #  include <GL/glu.h>
@@ -25,6 +25,4 @@
 
 void create_window(int argc, char**argv, int w, int h, int pos_x, int pos_y, const char *title);
 void refresh(void);
-void testCleanup(void);
-void close_window();
 int main2(int argc, char **argv);
