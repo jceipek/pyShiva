@@ -28,6 +28,7 @@ set(libOpenVG_HEADERS
 )
 add_definitions(-ansi -pedantic -DHAVE_CONFIG_H)
 include_directories(${OPENGL_INCLUDE_DIR})
-# TODO what if OpenGL library has nonstandart location?
+# TODO what if OpenGL library has nonstandard location?
 add_library(OpenVG ${libOpenVG_SOURCES})
 target_link_libraries(OpenVG ${OPENGL_LIBRARIES})
+SET_TARGET_PROPERTIES( OpenVG PROPERTIES COMPILE_FLAGS -fPIC)

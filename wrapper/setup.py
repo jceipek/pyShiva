@@ -12,7 +12,7 @@ if sys.platform.startswith('darwin'):
     library_dirs.extend('../glfw-2.7.7/lib/cocoa')
 
 elif sys.platform.startswith('linux'):
-    libraries.extend(['GL'])
+    libraries.extend(['GL', 'GLU'])
     library_dirs.extend('../glfw-2.7.7/lib/x11')
  
 pyshiva_module = Extension('pyshiva',
