@@ -24,8 +24,8 @@ Note: This doesn't work yet!
 		if ps.key_pressed("ESC") or not win.is_open:
 			running = False
 
-Installing on Ubuntu
----------------------
+Compiling ShivaVG on Ubuntu
+----------------------------
 	sudo apt-get install libx11-dev
 	sudo apt-get install mesa-common-dev
 	sudo apt-get install libglu1-mesa-dev
@@ -50,3 +50,19 @@ Installing on Ubuntu
 	cd wrapper
 	make
 
+Building the python wrapper on Ubuntu
+--------------------------------------
+	sudo apt-get install python-dev
+	sudo apt-get install cython
+
+	cd wrapper
+	python setup.py build_ext
+
+
+Testing the python wrapper
+------------------------------------
+	cd wrapper
+	cd build/lib*
+	python
+	>> import pyshiva
+	>> pyshiva.Window()
