@@ -35,6 +35,9 @@ cdef class Window:
         def __set__(self, value):
             cpyshiva.window_set_size(self._c_window, self._c_window.width, <int>value)
 
+    def is_open(self):
+        return cpyshiva.window_isopen(self._c_window)
+
     def refresh(self):
         cpyshiva.window_refresh(self._c_window)
 

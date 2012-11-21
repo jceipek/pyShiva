@@ -15,7 +15,7 @@ if __name__ == "__main__":
 	win = ps.Window("My First pyShiva Program", width = 500, height = 500)
 
 	last_time = time.clock()
-	while True:
+	while win.is_open():
 		elapsed = time.clock()-last_time
 		win.x += elapsed*speed*direction
 		if win.x + win.width >= width or win.x <= 0:

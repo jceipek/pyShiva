@@ -123,7 +123,7 @@ void window_dealloc (Window *window) { // XXX: TODO: return deallocation success
 // END WINDOW
 //
 
-int demo(){
+int demo() {
 	VGPaint fill; //declare an object that is filled
 	VGfloat white[] = {1,1,1,1}; //declare an object to represent the color white
 

@@ -10,7 +10,7 @@ cdef extern from "shiva_wrapper.h":
     Window *make_window (char *title, int width, int height, int pos_x, int pos_y)
     void window_refresh (Window *window)
     void window_dealloc (Window *window)
-    int window_isopen (Window *window)
+    bint window_isopen (Window *window)
     void window_set_pos (Window *window, int pos_x, int pos_y)
     void window_set_size (Window *window, int width, int height)
 
