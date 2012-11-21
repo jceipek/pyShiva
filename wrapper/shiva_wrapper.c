@@ -3,6 +3,7 @@
 #define WIDTH 500
 #define HEIGHT 500
 VGPath rect;
+Window *main_window = NULL; // GLFW only supports one window!
 
 //
 // BEGIN HELPERS
@@ -24,6 +25,11 @@ void *check_malloc(int size)
 //
 // BEGIN WINDOW
 Window *make_window (char *title, int width, int height, int pos_x, int pos_y) {
+	if (main_window != NULL) {
+		printf("%s\n", "There can only be one window at any time!");
+		return main_window;
+	}
+
 	if( !glfwInit() )
 	{
 		return NULL; // Couldn't initialize GLFW
@@ -36,18 +42,37 @@ Window *make_window (char *title, int width, int height, int pos_x, int pos_y) {
 	window->pos_x = pos_x;
 	window->pos_y = pos_y;
 
-	int n = glfwOpenWindow( width, height, 0,0,0,0,0,0, GLFW_WINDOW );
+	int n = glfwOpenWindow(width, height, 0,0,0,0,0,0, GLFW_WINDOW);
 	if (!n) {
 		glfwTerminate(); // Cleanup GLFW
 		return NULL; // Couldn't create a window
 	}
+
+	glfwSetWindowSizeCallback(window_resize_callback);
+	glfwSetWindowCloseCallback(window_close_callback);
 
 	glfwSetWindowTitle(title);
 	glfwSetWindowPos(pos_x, pos_y);
 
 	vgCreateContextSH(width, height); // XXX: TODO: handle errors!!!!
 
+	main_window = window;
+
 	return window;
+}
+
+int GLFWCALL window_close_callback (void) {
+	// This is the function that gets called when the window gets closed by the user
+	// TODO: add a python function here
+
+	return GL_TRUE;
+}
+
+void GLFWCALL window_resize_callback (int width, int height) {
+	if (main_window != NULL) {
+		main_window->width = width;
+		main_window->height = height;
+	}
 }
 
 void window_refresh (Window *window) {
@@ -71,24 +96,34 @@ void window_set_pos (Window *window, int pos_x, int pos_y) {
 	glfwSetWindowPos(pos_x, pos_y);
 }
 
+void window_set_size (Window *window, int width, int height) {
+	glfwSetWindowSize( width, height );
+}
+
 int window_isopen (Window *window) {
 	return glfwGetWindowParam(GLFW_OPENED);
 }
 
 void window_dealloc (Window *window) { // XXX: TODO: return deallocation success as a flag
-	// Clean up the ShivaVG context
-	vgDestroyContextSH();
+	if (main_window != NULL) {
+		// Clean up the ShivaVG context
+		vgDestroyContextSH();
 
-	// Close window and terminate GLFW
-	glfwTerminate();
+		// Close window and terminate GLFW
+		glfwTerminate();
 
-	// XXX: Clean up the contents of the struct
-	free(window);
+		// XXX: Clean up the contents of the struct
+		free(window); // TODO: Check to see if success!
+		window = NULL;
+		main_window = NULL;
+	} else {
+		printf("%s\n", "WINDOW ALREADY DEALLOCATED!");
+	}
 }
 // END WINDOW
 //
 
-int main2(){
+int demo(){
 	VGPaint fill; //declare an object that is filled
 	VGfloat white[] = {1,1,1,1}; //declare an object to represent the color white
 

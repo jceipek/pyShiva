@@ -39,9 +39,12 @@ typedef struct {
 } Window;
 
 Window *make_window (char *title, int width, int height, int pos_x, int pos_y);
+int GLFWCALL window_close_callback (void);
+void GLFWCALL window_resize_callback(int width, int height);
 void window_refresh (Window *window);
 void window_dealloc (Window *window);
 int window_isopen (Window *window);
 void window_set_pos (Window *window, int pos_x, int pos_y);
+void window_set_size (Window *window, int width, int height);
 
-int main2();
+int demo();
