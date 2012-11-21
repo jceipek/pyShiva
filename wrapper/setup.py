@@ -4,26 +4,22 @@ from Cython.Distutils import build_ext
 
 import os, sys
 
-libraries = list() #['OpenVG']
-extra_objects = list()
+libraries = ['OpenVG', 'glfw']
+library_dirs = ['../ShivaVG/src']
 
 if sys.platform.startswith('darwin'):
-    os.environ['LDFLAGS'] = '-g -framework OpenGL -framework Cocoa ../glfw-2.7.7/lib/cocoa/libglfw.a ../ShivaVG/src/libOpenVG.a'
+    os.environ['LDFLAGS'] = '-g -framework OpenGL -framework Cocoa'
+    library_dirs.extend('../glfw-2.7.7/lib/cocoa')
 
 elif sys.platform.startswith('linux'):
     libraries.extend(['GL'])
-
-    extra_objects.extend([
-        '../glfw-2.7.7/lib/x11/libglfw.a',
-        '../ShivaVG/src/libOpenVG.a'])
-
-
+    library_dirs.extend('../glfw-2.7.7/lib/x11')
  
 pyshiva_module = Extension('pyshiva',
     include_dirs = ['../ShivaVG/include'],
     sources = ['pyshiva.pyx', 'shiva_wrapper.c'],
     libraries = libraries,
-    extra_objects = extra_objects)
+    library_dirs = library_dirs)
 
 setup ( cmdclass = {'build_ext': build_ext},
         name = 'pyshiva',
