@@ -1,4 +1,4 @@
-PyShiva
+pyShiva
 =======
 
 The PyShiva project is an attempt to bring lightning fast high quality 2d graphics to python via the `pyshiva` module.
