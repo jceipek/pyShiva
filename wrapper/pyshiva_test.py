@@ -17,8 +17,7 @@ if __name__ == "__main__":
 	last_time = time.clock()
 	while True:
 		elapsed = time.clock()-last_time
-		print win.x+elapsed*speed*direction
-		win.set_pos(win.x+elapsed*speed*direction, 0)
+		win.x += elapsed*speed*direction
 		if win.x + win.width >= width or win.x <= 0:
 			direction *= -1
 
