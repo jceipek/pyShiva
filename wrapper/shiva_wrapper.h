@@ -18,11 +18,12 @@
 #  include "../glfw-2.7.7/include/GL/glfw.h"
 #endif
 
-#include "../src/GL/glext.h"
+#include "../ShivaVG/src/GL/glext.h"
 
 #include <vg/openvg.h>
 #include <vg/vgu.h>
 
-void create_window(int argc, char**argv, int w, int h, int pos_x, int pos_y, const char *title);
+int create_window(int w, int h, int pos_x, int pos_y, char *title);
 void refresh(void);
-int main2(int argc, char **argv);
+int main2();
+int testr();

@@ -13,5 +13,5 @@ ifeq ($(OS), Darwin)
 	GL_FLAGS = -g ../glfw-2.7.7/lib/cocoa/libglfw.a ../ShivaVG/src/libOpenVG.a -framework OpenGL -framework Cocoa -framework IOKit
 endif
 
-test_wrapper: wrapper.c
-	$(CC) wrapper.c wrapper_caller.c $(INCLUDE_FLAGS) $(GL_FLAGS) -o test_wrapper
+test_wrapper: shiva_wrapper.c
+	$(CC) shiva_wrapper.c shiva_wrapper_caller.c $(INCLUDE_FLAGS) $(GL_FLAGS) -o test_wrapper

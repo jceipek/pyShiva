@@ -1,4 +1,4 @@
-#include "wrapper.h"
+#include "shiva_wrapper.h"
 
 #define WIDTH 500
 #define HEIGHT 500
@@ -23,20 +23,27 @@ void refresh(void)
 	glfwSwapBuffers();
 }
 
-void create_window(int argc, char**argv, int w, int h, int pos_x, int pos_y, const char *title) {
+int create_window(int w, int h, int pos_x, int pos_y, char *title) {
 
 	// Open an OpenGL window
 	if( !glfwOpenWindow( w, h, 0,0,0,0,0,0, GLFW_WINDOW ) )
 	{
 		// Clean up glfw
 		glfwTerminate();
-		exit( EXIT_FAILURE );
+		return 1;
+		//exit( EXIT_FAILURE );
 	}
 
 	glfwSetWindowTitle(title);
 	glfwSetWindowPos(pos_x, pos_y);
 
 	vgCreateContextSH(w,h);
+	return 0;
+}
+
+int testr() {
+	printf("%s\n", "MADNESS");
+	return 0;
 }
 
 int main2(int argc, char **argv){
@@ -50,7 +57,7 @@ int main2(int argc, char **argv){
 	{
 		exit( EXIT_FAILURE );
 	}
-	create_window(argc, argv, WIDTH, HEIGHT, 0, 0, "HELLO"); //make a window
+	create_window(WIDTH, HEIGHT, 0, 0, "HELLO"); //make a window
 
 	fill = vgCreatePaint(); // actually make the fill object
     vgSetParameterfv(fill, VG_PAINT_COLOR, 4, white); //change fill to be white
