@@ -70,3 +70,4 @@ Testing the python wrapper
 	>> w = ps.Window("Hello, pyShiva!")
 	>> w.refresh()
 	>> w.x = 100
+	>> w.refresh()
