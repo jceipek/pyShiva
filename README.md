@@ -43,7 +43,7 @@ Compiling ShivaVG on Ubuntu
 
 	cd ..
 
-	cd PyShiva
+	cd ShivaVG
 	cmake .
 	make
 
@@ -70,3 +70,4 @@ Testing the python wrapper
 	>> w = ps.Window("Hello, pyShiva!")
 	>> w.refresh()
 	>> w.x = 100
+	>> w.refresh()
