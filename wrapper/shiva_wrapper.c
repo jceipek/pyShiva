@@ -1,6 +1,5 @@
 #include "shiva_wrapper.h"
 
-VGPath rect;
 Window *main_window = NULL; // GLFW only supports one window!
 
 //
@@ -106,6 +105,7 @@ int window_add_object (Window *window, Object *object) {
 
 void window_remove_object (Window *window, Object *object) {
 	layerNode_remove(window->contents, object->layer_node);
+	object->layer_node = NULL;
 }
 
 void window_set_pos (Window *window, int pos_x, int pos_y) {
@@ -228,17 +228,30 @@ Object *make_object(float x, float y) {
 	object->y = y;
 	object->contains = NULL;
 	object->layer_node = NULL;
+	object->path_data = NULL;
+	return object;
+}
+
+Object *make_rect(float x, float y, float width, float height) {
+	Object *object = make_object(x, y);
+	VGPath path = vgCreatePath(VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F,
+								1,0,0,0, VG_PATH_CAPABILITY_ALL);
+	vguRect(path, 0, 0, width, height);
+
+	object->path_data = path;
+
 	return object;
 }
 
 void object_dealloc(Object *object) {
-	
+	// TODO: Implement this!
+	free(object);
 }
 
 void object_draw (Object *object, float x, float y) {
 	vgTranslate(x, y);
 	if (object->contains == NULL) {
-		vgDrawPath(rect, VG_FILL_PATH); // TODO: Make this not just be a rect!
+		vgDrawPath(object->path_data, VG_FILL_PATH); // TODO: Make this not just be a rect!
 	} else {
 		LayerNode *curr;
 		curr = object->contains->first;
@@ -265,24 +278,20 @@ int demo() {
     vgSetParameterfv(fill, VG_PAINT_COLOR, 4, white); //change fill to be white
     vgSetPaint(fill, VG_FILL_PATH); // set the active fill color to be the white fill color we just defined
 	
-	rect = vgCreatePath(VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F,
-                      1,0,0,0, VG_PATH_CAPABILITY_ALL);
-	vguRect(rect, 0,0,50,50);
-
-	
 	int i;
 	for (i = 0; i < 3; i++) {
-		Object *object = make_object(i*120, 0);
+		Object *object = make_rect(i*120, 0, 50, 50);
 		window_add_object(win, object);
 	}
-	Object *demo_object = make_object(100, 300);
+	Object *demo_object = make_rect(100, 300, 100, 50);
 	window_add_object(win, demo_object);
 	for (i = 0; i < 3; i++) {
-		Object *object = make_object(i*120, 200);
+		Object *object = make_rect(i*120, 200, 50, 20);
 		window_add_object(win, object);
 	}
 
 	window_remove_object(win, demo_object);
+	window_add_object(win, demo_object);
 
 	while (running) {
 		window_refresh(win);

@@ -54,10 +54,11 @@ typedef struct Object {
 	float x, y;
 	LayerList *contains; // Set to NULL unless it is a Group
 	LayerNode *layer_node; // Set to NULL unless it is part of a Group or Window
-	// TODO: add data fields
+	VGPath *path_data;
 } Object;
 
 Object *make_object(float x, float y);
+Object *make_rect(float x, float y, float width, float height);
 void object_dealloc(Object *object);
 void object_draw (Object *object, float x, float y);
 
