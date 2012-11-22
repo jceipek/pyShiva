@@ -43,7 +43,7 @@ Compiling ShivaVG on Ubuntu
 
 	cd ..
 
-	cd PyShiva
+	cd ShivaVG
 	cmake .
 	make
 
