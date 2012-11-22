@@ -3,6 +3,14 @@ cimport cpyshiva
 def test():
     cpyshiva.demo()
 
+cdef class Rect:
+    cdef cpyshiva.Object *_c_object
+    """A Rect that can be added to groups and the window
+
+    """
+    def __cinit__(self, x=0, y=0, width=20, height=10):
+        self._c_object = cpyshiva.make_rect(x, y, width, height)
+
 cdef class Window:
     """A Window that can be created with pyshiva
 
@@ -41,7 +49,12 @@ cdef class Window:
     def refresh(self):
         cpyshiva.window_refresh(self._c_window)
 
+    def add(self, Rect obj):
+        cpyshiva.window_add_object(self._c_window, obj._c_object)
+
     def __dealloc__(self):
         # This is where we want to clean up memory.
         cpyshiva.window_dealloc(self._c_window)
         print "Deallocatin'"
+
+
