@@ -1,6 +1,6 @@
 cimport cpyshiva
 
-cdef test():
+def test():
     cpyshiva.demo()
 
 cdef class Window:

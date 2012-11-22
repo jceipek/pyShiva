@@ -1,7 +1,5 @@
 #include "shiva_wrapper.h"
 
-#define WIDTH 500
-#define HEIGHT 500
 VGPath rect;
 Window *main_window = NULL; // GLFW only supports one window!
 
@@ -41,6 +39,7 @@ Window *make_window (char *title, int width, int height, int pos_x, int pos_y) {
 	window->height = height;
 	window->pos_x = pos_x;
 	window->pos_y = pos_y;
+	window->contents = make_layerList();
 
 	int n = glfwOpenWindow(width, height, 0,0,0,0,0,0, GLFW_WINDOW);
 	if (!n) {
@@ -82,10 +81,14 @@ void window_refresh (Window *window) {
 	VGfloat magenta[] = {1,0,1,1};
 	vgSetfv(VG_CLEAR_COLOR, 4, magenta);
 	vgClear(0, 0, window->width, window->height);
-	 
-	vgLoadIdentity();
-	vgTranslate(100,100);
-	vgDrawPath(rect, VG_FILL_PATH);
+	
+	LayerNode *curr;
+	curr = window->contents->first;
+	while (curr != NULL) {
+		vgLoadIdentity();
+		object_draw(curr->contents, curr->contents->x, curr->contents->y);
+		curr = curr->next;
+	}
 
 	glfwSwapBuffers();	
 }
@@ -137,11 +140,29 @@ void window_dealloc (Window *window) { // XXX: TODO: return deallocation success
 //
 // START LAYER_NODE
 void layerNode_add_end_node (LayerList *list, LayerNode *node) {
-	// TODO: Implement!
+	if (list->first == NULL) {
+		list->first = node;
+		list->last = node;
+		list->length++;
+	} else if (list->last != NULL) {
+		list->last->next = node;
+		node->previous = list->last;
+		list->last = node;
+		list->length++;
+	}
 }
 
 void layerNode_add_start_node (LayerList *list, LayerNode *node) {
-	// TODO: Implement!
+	if (list->first == NULL) {
+		list->first = node;
+		list->last = node;
+		list->length++;
+	} else {
+		node->next = list->first;
+		list->first->previous = node;
+		list->first = node;
+		list->length++;
+	}
 }
 
 void layerNode_remove (LayerList *list, LayerNode *node) {
@@ -181,7 +202,6 @@ void layerNode_dealloc(LayerNode *node) {
 // START LAYER_LIST
 LayerList *make_layerList() {
 	LayerList *list = check_malloc(sizeof(LayerList));
-	list->identifier = ID_LAYER_LIST;
 	list->length = 0;
 	list->first = NULL;
 	list->last = NULL;
@@ -196,6 +216,38 @@ void layerList_dealloc(LayerList *list) {
 // END LAYER_LIST
 //
 
+//
+// START OBJECT
+Object *make_object(float x, float y) {
+	Object *object = check_malloc(sizeof(Object));
+	object->x = x;
+	object->y = y;
+	object->contains = NULL;
+	object->layer_node = NULL;
+	return object;
+}
+
+void object_dealloc(Object *object) {
+	
+}
+
+void object_draw (Object *object, float x, float y) {
+	vgTranslate(x, y);
+	if (object->contains == NULL) {
+		vgDrawPath(rect, VG_FILL_PATH); // TODO: Make this not just be a rect!
+	} else {
+		LayerNode *curr;
+		curr = object->contains->first;
+		while (curr != NULL) {
+			curr = curr->next;
+			vgLoadIdentity();
+			object_draw (curr->contents, x+curr->contents->x, y+curr->contents->y);
+		}
+	}
+}
+// END OBJECT
+//
+
 int demo() {
 	VGPaint fill; //declare an object that is filled
 	VGfloat white[] = {1,1,1,1}; //declare an object to represent the color white
@@ -203,7 +255,7 @@ int demo() {
 	int running = GL_TRUE;
 
 	// Initialize GLFW, create a ShivaVG context, open a window
-	Window *win = make_window("HELLO", WIDTH, HEIGHT, 0, 0);
+	Window *win = make_window("HELLO", 640, 480, 0, 0);
 
 	fill = vgCreatePaint(); // actually make the fill object
     vgSetParameterfv(fill, VG_PAINT_COLOR, 4, white); //change fill to be white
@@ -211,7 +263,16 @@ int demo() {
 	
 	rect = vgCreatePath(VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F,
                       1,0,0,0, VG_PATH_CAPABILITY_ALL);
-	vguRect(rect, -50,-30, 100,60);
+	vguRect(rect, 0,0,50,50);
+
+	
+	int i;
+	for (i = 0; i < 3; i++) {
+		Object *object = make_object(i*120, 0);
+		window_add_object (win, object);
+	}
+	//Object *object = make_object(100, 100);
+	//window_add_object (win, object);
 
 	while (running) {
 		window_refresh(win);

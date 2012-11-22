@@ -26,11 +26,6 @@
 void perror_exit(char *s);
 void *check_malloc(int size);
 
-enum IDENTIFIER { 
-	ID_LAYER_LIST,
-	ID_OBJECT
- };
-
 // This structure will keep track of the order in which objects shall be drawn
 typedef struct LayerNode {
 	struct LayerNode *previous;
@@ -40,7 +35,6 @@ typedef struct LayerNode {
 
 // This structure will contain information about the layer list
 typedef struct {
-	enum IDENTIFIER identifier; // Must be set equal to ID_LAYER_LIST
 	int length;
 	LayerNode *first;
 	LayerNode *last;
@@ -57,11 +51,15 @@ void layerList_dealloc(LayerList *list);
 
 // Object
 typedef struct Object {
-	enum IDENTIFIER identifier; // Must be set equal to ID OBJECT
+	float x, y;
 	LayerList *contains; // Set to NULL unless it is a Group
 	LayerNode *layer_node; // Set to NULL unless it is part of a Group or Window
 	// TODO: add data fields
 } Object;
+
+Object *make_object(float x, float y);
+void object_dealloc(Object *object);
+void object_draw (Object *object, float x, float y);
 
 // Window 
 typedef struct {
