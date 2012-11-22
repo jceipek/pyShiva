@@ -26,12 +26,48 @@
 void perror_exit(char *s);
 void *check_malloc(int size);
 
+enum IDENTIFIER { 
+	ID_LAYER_LIST,
+	ID_OBJECT
+ };
+
+// This structure will keep track of the order in which objects shall be drawn
+typedef struct LayerNode {
+	struct LayerNode *previous;
+	struct Object *contents;
+	struct LayerNode *next;
+} LayerNode;
+
+// This structure will contain information about the layer list
+typedef struct {
+	enum IDENTIFIER identifier; // Must be set equal to ID_LAYER_LIST
+	int length;
+	LayerNode *first;
+	LayerNode *last;
+} LayerList;
+
+void layerNode_add_end_node (LayerList *list, LayerNode *node);
+void layerNode_add_start_node (LayerList *list, LayerNode *node);
+void layerNode_remove (LayerList *list, LayerNode *node);
+LayerNode *make_layerNode();
+void layerNode_dealloc(LayerNode *node);
+
+LayerList *make_layerList();
+void layerList_dealloc(LayerList *list);
+
+// Object
+typedef struct Object {
+	enum IDENTIFIER identifier; // Must be set equal to ID OBJECT
+	LayerList *contains; // Set to NULL unless it is a Group
+	LayerNode *layer_node; // Set to NULL unless it is part of a Group or Window
+	// TODO: add data fields
+} Object;
+
+// Window 
 typedef struct {
 	int width, height, pos_x, pos_y;
 	char *title;
-	// TODO: add a data structure here for storing objects that get added to the window 
-	// (structure needs to have an ordering, the ability for objects to be efficiently inserted 
-	// and removed by hash)
+	LayerList *contents; // stores objects that get added to the window 
 
 	// TODO: add a high precision clock and the ability to keep track of:
 	//	How much time passed since last refresh
@@ -46,5 +82,6 @@ void window_dealloc (Window *window);
 int window_isopen (Window *window);
 void window_set_pos (Window *window, int pos_x, int pos_y);
 void window_set_size (Window *window, int width, int height);
+int window_add_object (Window *window, Object *object);
 
 int demo();

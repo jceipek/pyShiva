@@ -90,6 +90,17 @@ void window_refresh (Window *window) {
 	glfwSwapBuffers();	
 }
 
+int window_add_object (Window *window, Object *object) {
+	if (object->layer_node == NULL) {
+		LayerNode *node = make_layerNode();
+		node->contents = object;
+		object->layer_node = node;
+		layerNode_add_end_node(window->contents, node);
+		return 1; //Succeeded
+	}
+	return 0; // Failed; object is already part of something else
+}
+
 void window_set_pos (Window *window, int pos_x, int pos_y) {
 	window->pos_x = pos_x;
 	window->pos_y = pos_y;
@@ -123,6 +134,68 @@ void window_dealloc (Window *window) { // XXX: TODO: return deallocation success
 // END WINDOW
 //
 
+//
+// START LAYER_NODE
+void layerNode_add_end_node (LayerList *list, LayerNode *node) {
+	// TODO: Implement!
+}
+
+void layerNode_add_start_node (LayerList *list, LayerNode *node) {
+	// TODO: Implement!
+}
+
+void layerNode_remove (LayerList *list, LayerNode *node) {
+	if (list->first == node) {
+		list->first = node->next;
+	}
+	if (list->last == node) {
+		list->last = node->previous;
+	}
+	list->length--;
+	if (node->previous != NULL) {
+		node->previous->next = node->next;
+	}
+	if (node->next != NULL) {
+		node->next->previous = node->previous;
+	}
+	// TODO: figure out if we should dealloc here!
+}
+
+LayerNode *make_layerNode() {
+	LayerNode *node = check_malloc(sizeof(LayerNode));
+	node->previous = NULL;
+	node->contents = NULL; // TODO: make this be the object we add
+	node->next = NULL;
+
+	return node;
+}
+
+void layerNode_dealloc(LayerNode *node) {
+	// TODO: Implement this!!!
+	free(node);
+}
+// END LAYER_NODE
+//
+
+//
+// START LAYER_LIST
+LayerList *make_layerList() {
+	LayerList *list = check_malloc(sizeof(LayerList));
+	list->identifier = ID_LAYER_LIST;
+	list->length = 0;
+	list->first = NULL;
+	list->last = NULL;
+
+	return list;
+}
+
+void layerList_dealloc(LayerList *list) {
+	// TODO: Implement this!!!
+	free(list);
+}
+// END LAYER_LIST
+//
+
 int demo() {
 	VGPaint fill; //declare an object that is filled
 	VGfloat white[] = {1,1,1,1}; //declare an object to represent the color white
@@ -152,5 +225,3 @@ int demo() {
 	
 	return 0;
 }
-
-
