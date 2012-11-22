@@ -104,6 +104,10 @@ int window_add_object (Window *window, Object *object) {
 	return 0; // Failed; object is already part of something else
 }
 
+void window_remove_object (Window *window, Object *object) {
+	layerNode_remove(window->contents, object->layer_node);
+}
+
 void window_set_pos (Window *window, int pos_x, int pos_y) {
 	window->pos_x = pos_x;
 	window->pos_y = pos_y;
@@ -269,10 +273,16 @@ int demo() {
 	int i;
 	for (i = 0; i < 3; i++) {
 		Object *object = make_object(i*120, 0);
-		window_add_object (win, object);
+		window_add_object(win, object);
 	}
-	//Object *object = make_object(100, 100);
-	//window_add_object (win, object);
+	Object *demo_object = make_object(100, 300);
+	window_add_object(win, demo_object);
+	for (i = 0; i < 3; i++) {
+		Object *object = make_object(i*120, 200);
+		window_add_object(win, object);
+	}
+
+	window_remove_object(win, demo_object);
 
 	while (running) {
 		window_refresh(win);
