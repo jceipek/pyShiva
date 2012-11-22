@@ -9,20 +9,22 @@ Status
 Currently under heavy development.
 
 
+Full Documentation and Implementation Spec
+-------------------------------------------
+[Read it here](https://docs.google.com/document/d/1qF8y-nfQE38GGET-e_7vlTTwCGvvnqZUdMKl-cHi_js/edit). You can edit if if you are a collaborator.
+
 Simple Example
 ---------------
-Note: This doesn't work yet!
 
 	import pyshiva as ps
 	win = ps.Window("My First PyShiva Project!", width=640, height=480)
-	r = ps.Rect(10,10,100,50)
-	win.add(r)
+	
+	# Note: This part doesn't work yet
+	# r = ps.Rect(10,10,100,50)
+	# win.add(r)
 
-	running = True
-	while running:
+	while win.is_open():
 		win.refresh()
-		if ps.key_pressed("ESC") or not win.is_open:
-			running = False
 
 Compiling ShivaVG on Ubuntu
 ----------------------------
@@ -64,5 +66,7 @@ Testing the python wrapper
 	cd wrapper
 	cd build/lib*
 	python
-	>> import pyshiva
-	>> pyshiva.Window()
+	>> import pyshiva as ps
+	>> w = ps.Window("Hello, pyShiva!")
+	>> w.refresh()
+	>> w.x = 100
