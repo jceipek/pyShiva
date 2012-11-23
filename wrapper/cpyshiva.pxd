@@ -21,7 +21,9 @@ cdef extern from "shiva_wrapper.h":
         #LayerNode *layer_node
         #VGPath *path_data
 
+    Object *make_object(float x, float y)
     Object *make_rect(float x, float y, float width, float height)
     int window_add_object (Window *window, Object *object)
+    int window_remove_object (Window *window, Object *object)
 
     int demo()

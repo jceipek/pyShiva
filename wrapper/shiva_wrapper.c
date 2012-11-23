@@ -70,6 +70,7 @@ void GLFWCALL window_resize_callback (int width, int height) {
 	if (main_window != NULL) {
 		main_window->width = width;
 		main_window->height = height;
+		vgResizeSurfaceSH(width, height);
 	}
 }
 
@@ -77,7 +78,7 @@ void window_refresh (Window *window) {
 	// TODO: make this loop through every element of the variable size
 	// datastructure the window will have.
 
-	VGfloat magenta[] = {1,0,1,1};
+	VGfloat magenta[] = {0.9,0,0,1};
 	vgSetfv(VG_CLEAR_COLOR, 4, magenta);
 	vgClear(0, 0, window->width, window->height);
 	
@@ -103,9 +104,13 @@ int window_add_object (Window *window, Object *object) {
 	return 0; // Failed; object is already part of something else
 }
 
-void window_remove_object (Window *window, Object *object) {
-	layerNode_remove(window->contents, object->layer_node);
-	object->layer_node = NULL;
+int window_remove_object (Window *window, Object *object) {
+	if (object->layer_node != window->contents) {
+		layerNode_remove(window->contents, object->layer_node);
+		object->layer_node = NULL;
+		return 1; //Succeeded
+	}
+	return 0; // Failed; object is not part of window->contents
 }
 
 void window_set_pos (Window *window, int pos_x, int pos_y) {
@@ -154,6 +159,7 @@ void layerNode_add_end_node (LayerList *list, LayerNode *node) {
 		list->last = node;
 		list->length++;
 	}
+	// TODO: should anything else go here?
 }
 
 void layerNode_add_start_node (LayerList *list, LayerNode *node) {

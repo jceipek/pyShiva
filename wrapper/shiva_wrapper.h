@@ -82,6 +82,6 @@ int window_isopen (Window *window);
 void window_set_pos (Window *window, int pos_x, int pos_y);
 void window_set_size (Window *window, int width, int height);
 int window_add_object (Window *window, Object *object);
-void window_remove_object (Window *window, Object *object);
+int window_remove_object (Window *window, Object *object);
 
 int demo();
