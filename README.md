@@ -65,6 +65,7 @@ Compiling ShivaVG on Ubuntu
 Building the python wrapper on Ubuntu
 --------------------------------------
 Without this, you won't be able to run the python demos, make your own projects, or contribute to pyShiva's development.
+
 	sudo apt-get install python-dev
 	sudo apt-get install cython
 
@@ -75,5 +76,6 @@ Without this, you won't be able to run the python demos, make your own projects,
 Testing the python wrapper
 ------------------------------------
 This demo creates lots of bouncing colored squares.
+
 	cd wrapper
 	python many_objects_test.py
