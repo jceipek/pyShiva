@@ -4,6 +4,8 @@ pyShiva
 The PyShiva project is an attempt to bring lightning fast high quality 2d graphics to python via the `pyshiva` module.
 It aims to provide a simple vector API on top of the OpenGL-powered ShivaVG library.
 
+![Demo](https://raw.github.com/jceipek/pyShiva/master/screenshots/ManyObjectsDemo.png "pyShiva Many Objects Demo")
+
 Status
 -------
 Currently under heavy development.
