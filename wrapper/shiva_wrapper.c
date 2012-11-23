@@ -123,6 +123,11 @@ void window_set_size (Window *window, int width, int height) {
 	glfwSetWindowSize( width, height );
 }
 
+void window_set_title (Window *window, char *title) {
+	glfwSetWindowTitle(title);
+	window->title = title;
+}
+
 int window_isopen (Window *window) {
 	return glfwGetWindowParam(GLFW_OPENED);
 }

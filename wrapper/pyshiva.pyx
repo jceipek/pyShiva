@@ -66,10 +66,10 @@ cdef class Entity:
     def __cinit__(self):
         self._inited = False
 
-    def __init__(self, x=0, y=0):
+    def __init__(self, float x=0, float y=0):
         if not self._inited:
             self._inited = True
-            self._c_object = cpyshiva.make_object(<float>x, <float>y)
+            self._c_object = cpyshiva.make_object(x, y)
 
     property x:
         def __get__(self):
@@ -89,12 +89,14 @@ cdef class Rect(Entity):
     """
     cdef float _width
     cdef float _height
-    def __init__(self, x=0, y=0, width=20, height=10, color=(1,1,1,1)):
+    def __init__(self, float x=0, float y=0, float width=20, float height=10, color=(1,1,1,1)):
         if not self._inited:
             self._inited = True
             self._width = width
             self._height = height
-            self._c_object = cpyshiva.make_rect(<float>x, <float>y, <float>width, <float>height, cpyshiva.make_color(color[0], color[1], color[2], color[3]))
+            self._c_object = cpyshiva.make_rect(x, y,
+                                                width, height, 
+                                                cpyshiva.make_color(color[0], color[1], color[2], color[3]))
 
     property width:
         def __get__(self):
@@ -115,32 +117,38 @@ cdef class Window:
 
     """
     cdef cpyshiva.Window *_c_window
-    def __cinit__(self, title="pyshiva", width=640, height=480, x=0, y=0):
-        self._c_window = cpyshiva.make_window(<char *>title, <int>width, <int>height, <int>x, <int>y)
+    def __cinit__(self, char *title="pyshiva", int width=640, int height=480, int x=0, int y=0):
+        self._c_window = cpyshiva.make_window(title, width, height, x, y)
+
+    property title:
+        def __get__(self):
+            return self._c_window.title
+        def __set__(self, char *value):
+            cpyshiva.window_set_title (self._c_window, value)
 
     property x:
         def __get__(self):
             return self._c_window.pos_x
-        def __set__(self, value):
-            cpyshiva.window_set_pos(self._c_window, <int>value, self._c_window.pos_y)
+        def __set__(self, int value):
+            cpyshiva.window_set_pos(self._c_window, value, self._c_window.pos_y)
 
     property y:
         def __get__(self):
             return self._c_window.pos_y
-        def __set__(self, value):
-            cpyshiva.window_set_pos(self._c_window, self._c_window.pos_x, <int>value)
+        def __set__(self, int value):
+            cpyshiva.window_set_pos(self._c_window, self._c_window.pos_x, value)
 
     property width:
         def __get__(self):
             return self._c_window.width
-        def __set__(self, value):
-            cpyshiva.window_set_size(self._c_window, <int>value, self._c_window.height)
+        def __set__(self, int value):
+            cpyshiva.window_set_size(self._c_window, value, self._c_window.height)
 
     property height:
         def __get__(self):
             return self._c_window.height
-        def __set__(self, value):
-            cpyshiva.window_set_size(self._c_window, self._c_window.width, <int>value)
+        def __set__(self, int value):
+            cpyshiva.window_set_size(self._c_window, self._c_window.width, value)
 
     def is_open(self):
         return cpyshiva.window_isopen(self._c_window)

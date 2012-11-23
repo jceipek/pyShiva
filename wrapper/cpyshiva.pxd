@@ -13,6 +13,7 @@ cdef extern from "shiva_wrapper.h":
     bint window_isopen (Window *window)
     void window_set_pos (Window *window, int pos_x, int pos_y)
     void window_set_size (Window *window, int width, int height)
+    void window_set_title (Window *window, char *title)
 
     ctypedef struct Color:
         pass

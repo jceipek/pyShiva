@@ -36,17 +36,25 @@ class Bouncer(ps.Rect):
 		else:
 			self.y += delta_y
 
-w = ps.Window("Many Objects Demo!")
+w = ps.Window(b"Many Objects Demo!")
 
 bouncers = list()
-count = 0
+'''
+for _ in range(1000):
+	b = Bouncer(w)
+	bouncers.append(b)
+	w.add(b)
+'''
+cycles = 0
 
 while w.is_open():
-	count += 1
-	if count % 2 == 0:
+	cycles += 1
+	if cycles % 2 == 0:
 		b = Bouncer(w)
 		bouncers.append(b)
 		w.add(b)
+		new_title = "Many Objects Demo with %d objects!" % len(bouncers)
+		w.title = new_title.encode() # For python3 compatibility
 	for b in bouncers:
 		b.simulate()
 
