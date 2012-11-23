@@ -50,12 +50,13 @@ cdef class Color:
             return self._b
         if index == 3:
             return self._a
+        raise IndexError("colors have 4 channels: r,g,b,a")
 
     def __repr__(self):
-        return (self._r, self._g, self._b, self._a)
+        return str((self._r, self._g, self._b, self._a))
 
     def __str__(self):
-        return str(self.__repr__())
+        return "Color with r:%f g:%f b:%f a:%f" % (self._r, self._g, self._b, self._a)
 
 cdef class Entity:
     cdef bint _inited
