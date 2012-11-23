@@ -3,6 +3,11 @@ cimport cpyshiva
 def test():
     cpyshiva.demo()
 
+cdef class Color:
+    cdef cpyshiva.Color *_c_color
+    def __cinit__(self, float r, float g, float b, float a=1.0):
+        self._c_color = cpyshiva.make_color(r, g, b, a)
+
 cdef class Entity:
     cdef bint _inited
     cdef cpyshiva.Object *_c_object
@@ -20,25 +25,41 @@ cdef class Entity:
     property x:
         def __get__(self):
             return self._c_object.x
-        def __set__(self, value):
-            self._c_object.x = <float>value
+        def __set__(self, float value):
+            self._c_object.x = value
 
     property y:
         def __get__(self):
             return self._c_object.y
-        def __set__(self, value):
-            self._c_object.y = <float>value
+        def __set__(self, float value):
+            self._c_object.y = value
 
 cdef class Rect(Entity):
     """A Rect that can be added to groups and the window
 
     """
-    #def __cinit__(self, x=0, y=0, width=20, height=10):
-    #    self._c_object = cpyshiva.make_rect(<float>x, <float>y, <float>width, <float>height)
+    cdef float _width
+    cdef float _height
     def __init__(self, x=0, y=0, width=20, height=10):
         if not self._inited:
             self._inited = True
-            self._c_object = cpyshiva.make_rect(<float>x, <float>y, <float>width, <float>height)       
+            self._width = width
+            self._height = height
+            self._c_object = cpyshiva.make_rect(<float>x, <float>y, <float>width, <float>height, cpyshiva.make_color(0,1,0,1))
+
+    property width:
+        def __get__(self):
+            return self._width
+        def __set__(self, value):
+            # TODO: Implement!
+            print "width cannot be set yet!"
+
+    property height:
+        def __get__(self):
+            return self._height
+        def __set__(self, value):
+            # TODO: Implement!
+            print "height cannot be set yet!"
 
 cdef class Window:
     """A Window that can be created with pyshiva

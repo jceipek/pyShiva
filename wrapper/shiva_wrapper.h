@@ -49,16 +49,25 @@ void layerNode_dealloc(LayerNode *node);
 LayerList *make_layerList();
 void layerList_dealloc(LayerList *list);
 
+// Color
+typedef struct {
+	VGPaint *paint;
+} Color;
+
+Color *make_color(float r, float g, float b, float a);
+void color_dealloc(Color *color);
+
 // Object
 typedef struct Object {
 	float x, y;
 	LayerList *contains; // Set to NULL unless it is a Group
 	LayerNode *layer_node; // Set to NULL unless it is part of a Group or Window
-	VGPath *path_data;
+	VGPath *path_data; // Set to NULL if it is a Group
+	Color *fill; // Set to NULL if it is a Group
 } Object;
 
 Object *make_object(float x, float y);
-Object *make_rect(float x, float y, float width, float height);
+Object *make_rect(float x, float y, float width, float height, Color *fill);
 void object_dealloc(Object *object);
 void object_draw (Object *object, float x, float y);
 

@@ -12,18 +12,26 @@ class Bouncer(ps.Rect):
 		ps.Rect.__init__(self,x,y,20,20)
 
 	def simulate(self):
-		if self.x < 0:
+		delta_x = self.dir_x * self.speed
+		delta_y = self.dir_y * self.speed
+		if self.x + delta_x < 0:
 			self.dir_x = 1
-		elif self.x > self.window.width:
+			self.x = 0
+		elif self.x + delta_x >= self.window.width - self.width:
 			self.dir_x = -1
-		if self.y < 0:
+			self.x = self.window.width - self.width
+		else:
+			self.x += delta_x
+		if self.y + delta_y < 0:
 			self.dir_y = 1
-		elif self.y > self.window.height:
+			self.y = 0
+		if self.y + delta_y >= self.window.height - self.height:
 			self.dir_y = -1
-		self.x += self.dir_x * self.speed
-		self.y += self.dir_y * self.speed
+			self.y = self.window.height - self.height
+		else:
+			self.y += delta_y
 
-w = ps.Window("Hello, World!", width = 1000, height = 1000)
+w = ps.Window("Many Objects Demo!")
 
 bouncers = list()
 count = 0

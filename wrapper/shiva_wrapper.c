@@ -235,16 +235,18 @@ Object *make_object(float x, float y) {
 	object->contains = NULL;
 	object->layer_node = NULL;
 	object->path_data = NULL;
+	object->fill = NULL;
 	return object;
 }
 
-Object *make_rect(float x, float y, float width, float height) {
+Object *make_rect(float x, float y, float width, float height, Color *fill) {
 	Object *object = make_object(x, y);
 	VGPath path = vgCreatePath(VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F,
 								1,0,0,0, VG_PATH_CAPABILITY_ALL);
 	vguRect(path, 0, 0, width, height);
 
 	object->path_data = path;
+	object->fill = fill;
 
 	return object;
 }
@@ -257,6 +259,7 @@ void object_dealloc(Object *object) {
 void object_draw (Object *object, float x, float y) {
 	vgTranslate(x, y);
 	if (object->contains == NULL) {
+		vgSetPaint(object->fill->paint, VG_FILL_PATH);
 		vgDrawPath(object->path_data, VG_FILL_PATH); // TODO: Make this not just be a rect!
 	} else {
 		LayerNode *curr;
@@ -271,28 +274,40 @@ void object_draw (Object *object, float x, float y) {
 // END OBJECT
 //
 
-int demo() {
-	VGPaint fill; //declare an object that is filled
-	VGfloat white[] = {1,1,1,1}; //declare an object to represent the color white
+Color *make_color (float r, float g, float b, float a) {
+	// TODO: More checking during allocation
+	Color *color = check_malloc(sizeof(Color));
+	VGPaint paint;
+	VGfloat paint_array[] = {r, g, b, a};
+	paint = vgCreatePaint();
+    vgSetParameterfv(paint, VG_PAINT_COLOR, 4, paint_array);
+    color->paint = paint;
 
+    return color;
+}
+
+void color_dealloc (Color *color) {
+	// TODO: XXX: Actually free the data in the struct
+	free(color);
+}
+
+int demo() {
 	int running = GL_TRUE;
 
 	// Initialize GLFW, create a ShivaVG context, open a window
 	Window *win = make_window("HELLO", 640, 480, 0, 0);
 
-	fill = vgCreatePaint(); // actually make the fill object
-    vgSetParameterfv(fill, VG_PAINT_COLOR, 4, white); //change fill to be white
-    vgSetPaint(fill, VG_FILL_PATH); // set the active fill color to be the white fill color we just defined
-	
+	Color *color = make_color(1,1,1,1);
+
 	int i;
 	for (i = 0; i < 3; i++) {
-		Object *object = make_rect(i*120, 0, 50, 50);
+		Object *object = make_rect(i*120, 0, 50, 50, color);
 		window_add_object(win, object);
 	}
-	Object *demo_object = make_rect(100, 300, 100, 50);
+	Object *demo_object = make_rect(100, 300, 100, 50, color);
 	window_add_object(win, demo_object);
 	for (i = 0; i < 3; i++) {
-		Object *object = make_rect(i*120, 200, 50, 20);
+		Object *object = make_rect(i*120, 200, 50, 20, color);
 		window_add_object(win, object);
 	}
 

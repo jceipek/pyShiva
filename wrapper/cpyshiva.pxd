@@ -14,6 +14,10 @@ cdef extern from "shiva_wrapper.h":
     void window_set_pos (Window *window, int pos_x, int pos_y)
     void window_set_size (Window *window, int width, int height)
 
+    ctypedef struct Color:
+        pass
+    Color *make_color(float r, float g, float b, float a)
+
     ctypedef struct Object:
         float x
         float y
@@ -22,7 +26,7 @@ cdef extern from "shiva_wrapper.h":
         #VGPath *path_data
 
     Object *make_object(float x, float y)
-    Object *make_rect(float x, float y, float width, float height)
+    Object *make_rect(float x, float y, float width, float height, Color *color)
     int window_add_object (Window *window, Object *object)
     int window_remove_object (Window *window, Object *object)
 
