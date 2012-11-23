@@ -5,8 +5,57 @@ def test():
 
 cdef class Color:
     cdef cpyshiva.Color *_c_color
+    cdef float _r
+    cdef float _g
+    cdef float _b
+    cdef float _a
     def __cinit__(self, float r, float g, float b, float a=1.0):
+        # TODO: Make colors mutable!
+        self._r = r
+        self._g = g
+        self._b = b
+        self._a = a
         self._c_color = cpyshiva.make_color(r, g, b, a)
+
+    property r:
+        def __get__(self):
+            return self._r
+        def __set__(self, float value):
+            print "Colors are currently immutable (you can't change them)!"
+
+    property g:
+        def __get__(self):
+            return self._g
+        def __set__(self, float value):
+            print "Colors are currently immutable (you can't change them)!"
+
+    property b:
+        def __get__(self):
+            return self._b
+        def __set__(self, float value):
+            print "Colors are currently immutable (you can't change them)!"
+
+    property a:
+        def __get__(self):
+            return self._a
+        def __set__(self, float value):
+            print "Colors are currently immutable (you can't change them)!"
+
+    def __getitem__(self, int index):
+        if index == 0:
+            return self._r
+        if index == 1:
+            return self._g
+        if index == 2:
+            return self._b
+        if index == 3:
+            return self._a
+
+    def __repr__(self):
+        return (self._r, self._g, self._b, self._a)
+
+    def __str__(self):
+        return str(self.__repr__())
 
 cdef class Entity:
     cdef bint _inited
@@ -40,12 +89,12 @@ cdef class Rect(Entity):
     """
     cdef float _width
     cdef float _height
-    def __init__(self, x=0, y=0, width=20, height=10):
+    def __init__(self, x=0, y=0, width=20, height=10, color=(1,1,1,1)):
         if not self._inited:
             self._inited = True
             self._width = width
             self._height = height
-            self._c_object = cpyshiva.make_rect(<float>x, <float>y, <float>width, <float>height, cpyshiva.make_color(0,1,0,1))
+            self._c_object = cpyshiva.make_rect(<float>x, <float>y, <float>width, <float>height, cpyshiva.make_color(color[0], color[1], color[2], color[3]))
 
     property width:
         def __get__(self):

@@ -9,7 +9,12 @@ class Bouncer(ps.Rect):
 		self.speed = random.random()*10
 		x = random.randint(0, self.window.width)
 		y = random.randint(0, self.window.height)
-		ps.Rect.__init__(self,x,y,20,20)
+		r = random.random()
+		g = random.random()
+		b = random.random()
+		a = random.random()
+		col = ps.Color(r, g, b, a)
+		ps.Rect.__init__(self, x, y, 40, 40, col)
 
 	def simulate(self):
 		delta_x = self.dir_x * self.speed
@@ -38,7 +43,7 @@ count = 0
 
 while w.is_open():
 	count += 1
-	if count % 100 == 0:
+	if count % 2 == 0:
 		b = Bouncer(w)
 		bouncers.append(b)
 		w.add(b)
