@@ -21,9 +21,8 @@ Simple Example
 	import pyshiva as ps
 	win = ps.Window("My First PyShiva Project!", width=640, height=480)
 	
-	# Note: This part doesn't work yet
-	# r = ps.Rect(10,10,100,50)
-	# win.add(r)
+	r = ps.Rect(10, 10, 100, 50)
+	win.add(r)
 
 	while win.is_open():
 		win.refresh()
@@ -70,6 +69,4 @@ Testing the python wrapper
 	python
 	>> import pyshiva as ps
 	>> w = ps.Window("Hello, pyShiva!")
-	>> w.refresh()
-	>> w.x = 100
 	>> w.refresh()
