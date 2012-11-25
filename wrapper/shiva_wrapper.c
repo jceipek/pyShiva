@@ -21,7 +21,7 @@ void *check_malloc(int size)
 
 //
 // BEGIN WINDOW
-Window *make_window (char *title, int width, int height, int pos_x, int pos_y) {
+Window *make_window (char *title, int width, int height) {
 	if (main_window != NULL) {
 		printf("%s\n", "There can only be one window at any time!");
 		return main_window;
@@ -36,8 +36,6 @@ Window *make_window (char *title, int width, int height, int pos_x, int pos_y) {
 	window->title = title; // XXX: TODO: Should copy; not point!
 	window->width = width;
 	window->height = height;
-	window->pos_x = pos_x;
-	window->pos_y = pos_y;
 	window->contents = make_layerList();
 
 	int n = glfwOpenWindow(width, height, 0,0,0,0,0,0, GLFW_WINDOW);
@@ -50,7 +48,6 @@ Window *make_window (char *title, int width, int height, int pos_x, int pos_y) {
 	glfwSetWindowCloseCallback(window_close_callback);
 
 	glfwSetWindowTitle(title);
-	glfwSetWindowPos(pos_x, pos_y);
 
 	vgCreateContextSH(width, height); // XXX: TODO: handle errors!!!!
 
@@ -113,11 +110,6 @@ int window_remove_object (Window *window, Object *object) {
 	return 0; // Failed; object is not part of window->contents
 }
 
-void window_set_pos (Window *window, int pos_x, int pos_y) {
-	window->pos_x = pos_x;
-	window->pos_y = pos_y;
-	glfwSetWindowPos(pos_x, pos_y);
-}
 
 void window_set_size (Window *window, int width, int height) {
 	glfwSetWindowSize( width, height );
@@ -300,7 +292,7 @@ int demo() {
 	int running = GL_TRUE;
 
 	// Initialize GLFW, create a ShivaVG context, open a window
-	Window *win = make_window("HELLO", 640, 480, 0, 0);
+	Window *win = make_window("HELLO", 640, 480);
 
 	Color *color = make_color(1,1,1,1);
 

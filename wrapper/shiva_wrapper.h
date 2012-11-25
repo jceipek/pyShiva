@@ -73,7 +73,7 @@ void object_draw (Object *object, float x, float y);
 
 // Window 
 typedef struct {
-	int width, height, pos_x, pos_y;
+	int width, height;
 	char *title;
 	LayerList *contents; // stores objects that get added to the window 
 
@@ -82,13 +82,13 @@ typedef struct {
 	//  How long since the window opened
 } Window;
 
-Window *make_window (char *title, int width, int height, int pos_x, int pos_y);
+Window *make_window (char *title, int width, int height);
 int GLFWCALL window_close_callback (void);
 void GLFWCALL window_resize_callback(int width, int height);
 void window_refresh (Window *window);
 void window_dealloc (Window *window);
 int window_isopen (Window *window);
-void window_set_pos (Window *window, int pos_x, int pos_y);
+//void window_set_pos (Window *window, int pos_x, int pos_y);
 void window_set_size (Window *window, int width, int height);
 void window_set_title (Window *window, char *title);
 int window_add_object (Window *window, Object *object);

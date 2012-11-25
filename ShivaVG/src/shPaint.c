@@ -699,6 +699,7 @@ int shDrawRadialGradientMesh(SHPaint *p, SHVector2 *min, SHVector2 *max,
     max2.x = f.x + tmax.x * ux.x + tmax.y * uy.x;
     max2.y = f.y + tmax.x * ux.y + tmax.y * uy.y;
     
+    
     /* Draw quad */
     if (i!=0) {
       glMultiTexCoord1f(texUnit, minOffset);

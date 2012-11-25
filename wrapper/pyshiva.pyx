@@ -118,26 +118,14 @@ cdef class Window:
 
     """
     cdef cpyshiva.Window *_c_window
-    def __cinit__(self, char *title="pyshiva", int width=640, int height=480, int x=0, int y=0):
-        self._c_window = cpyshiva.make_window(title, width, height, x, y)
+    def __cinit__(self, char *title="pyshiva", int width=640, int height=480):
+        self._c_window = cpyshiva.make_window(title, width, height)
 
     property title:
         def __get__(self):
             return self._c_window.title
         def __set__(self, char *value):
             cpyshiva.window_set_title (self._c_window, value)
-
-    property x:
-        def __get__(self):
-            return self._c_window.pos_x
-        def __set__(self, int value):
-            cpyshiva.window_set_pos(self._c_window, value, self._c_window.pos_y)
-
-    property y:
-        def __get__(self):
-            return self._c_window.pos_y
-        def __set__(self, int value):
-            cpyshiva.window_set_pos(self._c_window, self._c_window.pos_x, value)
 
     property width:
         def __get__(self):
