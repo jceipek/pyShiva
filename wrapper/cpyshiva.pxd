@@ -3,15 +3,12 @@ cdef extern from "shiva_wrapper.h":
     ctypedef struct Window:
         int width
         int height
-        int pos_x
-        int pos_y
         char *title
 
-    Window *make_window (char *title, int width, int height, int pos_x, int pos_y)
+    Window *make_window (char *title, int width, int height)
     void window_refresh (Window *window)
     void window_dealloc (Window *window)
     bint window_isopen (Window *window)
-    void window_set_pos (Window *window, int pos_x, int pos_y)
     void window_set_size (Window *window, int width, int height)
     void window_set_title (Window *window, char *title)
 
