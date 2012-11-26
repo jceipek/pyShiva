@@ -1,3 +1,5 @@
+#Basically a header file for pyshiva.pyx
+
 cdef extern from "shiva_wrapper.h":
 
     ctypedef struct Window:
