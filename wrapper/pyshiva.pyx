@@ -113,6 +113,12 @@ cdef class Rect(Entity):
             # TODO: Implement!
             print "height cannot be set yet!"
 
+    def __repr__(self):
+        return str((self.x, self.y, self.width, self.height))
+
+    def __str__(self):
+        return "Rect at (%f, %f) with size (%f,%f)" % (self.x, self.y, self.width, self.height)
+
 cdef class Window:
     """A Window that can be created with pyshiva
 
