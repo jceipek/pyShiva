@@ -33,7 +33,7 @@ Window *make_window (char *title, int width, int height) {
 	}
 
 	Window *window = check_malloc (sizeof(Window));
-	window->title = title; // XXX: TODO: Should copy; not point!
+	window->title = strdup(title);
 	window->width = width;
 	window->height = height;
 	window->contents = make_layerList();
