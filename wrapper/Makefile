@@ -15,3 +15,6 @@ endif
 
 test_wrapper: shiva_wrapper.c
 	$(CC) shiva_wrapper.c shiva_wrapper_caller.c $(INCLUDE_FLAGS) $(GL_FLAGS) -o test_wrapper
+	
+shiva_test: shiva_test.c
+	$(CC) shiva_test.c $(INCLUDE_FLAGS) $(GL_FLAGS) -o shiva_test
