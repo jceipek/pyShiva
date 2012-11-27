@@ -116,8 +116,9 @@ void window_set_size (Window *window, int width, int height) {
 }
 
 void window_set_title (Window *window, char *title) {
-	glfwSetWindowTitle(title);
-	window->title = title;
+	char* new_title = strdup(title);
+	glfwSetWindowTitle(new_title);
+	window->title = new_title;
 }
 
 int window_isopen (Window *window) {
