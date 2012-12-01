@@ -37,6 +37,7 @@ Window *make_window (char *title, int width, int height) {
 	window->width = width;
 	window->height = height;
 	window->contents = make_layerList();
+	window->s_last_refresh_time = 0.0;
 
 	int n = glfwOpenWindow(width, height, 0,0,0,0,0,0, GLFW_WINDOW);
 	if (!n) {
@@ -75,6 +76,8 @@ void window_refresh (Window *window) {
 	// TODO: make this loop through every element of the variable size
 	// datastructure the window will have.
 
+	window->s_last_refresh_time = glfwGetTime();
+
 	VGfloat magenta[] = {0.9,0,0,1};
 	vgSetfv(VG_CLEAR_COLOR, 4, magenta);
 	vgClear(0, 0, window->width, window->height);
@@ -102,7 +105,7 @@ int window_add_object (Window *window, Object *object) {
 }
 
 int window_remove_object (Window *window, Object *object) {
-	if (object->layer_node != window->contents) {
+	if (object->layer_node->layer_list_ref != window->contents) {
 		layerNode_remove(window->contents, object->layer_node);
 		object->layer_node = NULL;
 		return 1; //Succeeded
@@ -157,6 +160,7 @@ void layerNode_add_end_node (LayerList *list, LayerNode *node) {
 		list->last = node;
 		list->length++;
 	}
+	node->layer_list_ref = list;
 	// TODO: should anything else go here?
 }
 
@@ -171,9 +175,11 @@ void layerNode_add_start_node (LayerList *list, LayerNode *node) {
 		list->first = node;
 		list->length++;
 	}
+	node->layer_list_ref = list;
 }
 
 void layerNode_remove (LayerList *list, LayerNode *node) {
+	// Assumes that node is in list
 	if (list->first == node) {
 		list->first = node->next;
 	}
@@ -195,6 +201,7 @@ LayerNode *make_layerNode() {
 	node->previous = NULL;
 	node->contents = NULL; // TODO: make this be the object we add
 	node->next = NULL;
+	node->layer_list_ref = NULL;
 
 	return node;
 }

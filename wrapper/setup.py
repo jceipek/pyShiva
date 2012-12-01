@@ -16,7 +16,7 @@ elif sys.platform.startswith('linux'):
     library_dirs.extend('../glfw-2.7.7/lib/x11')
  
 pyshiva_module = Extension('pyshiva',
-    include_dirs = ['../ShivaVG/include'],
+    include_dirs = ['../ShivaVG/include', '../glfw-2.7.7/include/GL'],
     sources = ['pyshiva.pyx', 'shiva_wrapper.c'],
     libraries = libraries,
     library_dirs = library_dirs)

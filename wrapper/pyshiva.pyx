@@ -3,6 +3,12 @@ cimport cpyshiva
 def test():
     cpyshiva.demo()
 
+def get_mouse_pos():
+    cdef int x
+    cdef int y
+    cpyshiva.glfwGetMousePos(&x, &y)
+    return (x, y)
+
 cdef class Color:
     cdef cpyshiva.Color *_c_color
     cdef float _r
@@ -156,6 +162,12 @@ cdef class Window:
 
     def remove(self, Entity obj):
         cpyshiva.window_remove_object(self._c_window, obj._c_object)
+
+    def s_since_open(self):
+        return cpyshiva.glfwGetTime()
+
+    def s_since_refresh(self):
+        return cpyshiva.glfwGetTime() - self._c_window.s_last_refresh_time
 
     def __dealloc__(self):
         # This is where we want to clean up memory.

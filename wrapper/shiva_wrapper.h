@@ -31,13 +31,14 @@ typedef struct LayerNode {
 	struct LayerNode *previous;
 	struct Object *contents;
 	struct LayerNode *next;
+	struct LayerList *layer_list_ref;
 } LayerNode;
 
 // This structure will contain information about the layer list
-typedef struct {
+typedef struct LayerList {
 	int length;
-	LayerNode *first;
-	LayerNode *last;
+	struct LayerNode *first;
+	struct LayerNode *last;
 } LayerList;
 
 void layerNode_add_end_node (LayerList *list, LayerNode *node);
@@ -50,7 +51,7 @@ LayerList *make_layerList();
 void layerList_dealloc(LayerList *list);
 
 // Color
-typedef struct {
+typedef struct Color {
 	VGPaint *paint;
 } Color;
 
@@ -60,10 +61,11 @@ void color_dealloc(Color *color);
 // Object
 typedef struct Object {
 	float x, y;
-	LayerList *contains; // Set to NULL unless it is a Group
-	LayerNode *layer_node; // Set to NULL unless it is part of a Group or Window
+	struct LayerList *contains; // Set to NULL unless it is a Group
+	struct LayerNode *layer_node; // Set to NULL unless it is part of a Group or Window
+	// TODO: Use a union?
 	VGPath *path_data; // Set to NULL if it is a Group
-	Color *fill; // Set to NULL if it is a Group
+	struct Color *fill; // Set to NULL if it is a Group
 } Object;
 
 Object *make_object(float x, float y);
@@ -72,14 +74,15 @@ void object_dealloc(Object *object);
 void object_draw (Object *object, float x, float y);
 
 // Window 
-typedef struct {
+typedef struct Window {
 	int width, height;
 	char *title;
-	LayerList *contents; // stores objects that get added to the window 
+	struct LayerList *contents; // stores objects that get added to the window 
 
 	// TODO: add a high precision clock and the ability to keep track of:
 	//	How much time passed since last refresh
 	//  How long since the window opened
+	double s_last_refresh_time;
 } Window;
 
 Window *make_window (char *title, int width, int height);

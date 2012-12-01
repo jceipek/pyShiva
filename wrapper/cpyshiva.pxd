@@ -1,11 +1,15 @@
-#Basically a header file for pyshiva.pyx
+cdef extern from "shiva_wrapper.h":
+    double glfwGetTime()
+    void glfwGetMousePos( int *x, int *y )
 
+#Basically a header file for pyshiva.pyx
 cdef extern from "shiva_wrapper.h":
 
     ctypedef struct Window:
         int width
         int height
         char *title
+        double s_last_refresh_time
 
     Window *make_window (char *title, int width, int height)
     void window_refresh (Window *window)
