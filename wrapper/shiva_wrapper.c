@@ -104,8 +104,8 @@ int window_add_object (Window *window, Object *object) {
 	return 0; // Failed; object is already part of something else
 }
 
-int window_remove_object (Window *window, Object *object) {
-	if (object->layer_node->layer_list_ref != window->contents) {
+int window_remove_object (Window *window, Object *object) { //TODO: Check object owner properly.
+	if (object->layer_node->layer_list_ref != window->contents) { //if object is in window:
 		layerNode_remove(window->contents, object->layer_node);
 		object->layer_node = NULL;
 		return 1; //Succeeded
@@ -130,16 +130,19 @@ int window_isopen (Window *window) {
 
 void window_dealloc (Window *window) { // XXX: TODO: return deallocation success as a flag
 	if (main_window != NULL) {
-		// Clean up the ShivaVG context
+		
+
+		free(window->title);
+        layerList_dealloc(window->contents); //TODO: Make sure implemented
+		free(window); // TODO: Check to see if deallocs are success!
+		window = NULL;
+		main_window = NULL;
+        
+        // Clean up the ShivaVG context
 		vgDestroyContextSH();
 
 		// Close window and terminate GLFW
 		glfwTerminate();
-
-		// XXX: Clean up the contents of the struct
-		free(window); // TODO: Check to see if success!
-		window = NULL;
-		main_window = NULL;
 	} else {
 		printf("%s\n", "WINDOW ALREADY DEALLOCATED!");
 	}
@@ -207,8 +210,9 @@ LayerNode *make_layerNode() {
 }
 
 void layerNode_dealloc(LayerNode *node) {
-	// TODO: Implement this!!!
-	free(node);
+	// TODO: Test this!!!
+    object_dealloc(node->contents);
+    free(node);
 }
 // END LAYER_NODE
 //
@@ -225,7 +229,13 @@ LayerList *make_layerList() {
 }
 
 void layerList_dealloc(LayerList *list) {
-	// TODO: Implement this!!!
+	// TODO: test this!!!
+    LayerNode *node = list->first;
+    while(node != NULL) {
+        LayerNode *next = node->next; 
+        layerNode_dealloc(node);
+        node = next;
+    }
 	free(list);
 }
 // END LAYER_LIST
@@ -258,7 +268,16 @@ Object *make_rect(float x, float y, float width, float height, Color *fill) {
 
 void object_dealloc(Object *object) {
 	// TODO: Implement this!
-	free(object);
+    if (object->contains != NULL) {
+        layerList_dealloc(object->contains);
+    }
+    if (object->path_data != NULL) {
+        //VGPath free(object->path_data); //TODO: Look up syntax, implement
+    }
+    if (object->fill != NULL) {
+        color_dealloc(object->fill);
+	}
+    free(object);
 }
 
 void object_draw (Object *object, float x, float y) {
@@ -293,6 +312,8 @@ Color *make_color (float r, float g, float b, float a) {
 
 void color_dealloc (Color *color) {
 	// TODO: XXX: Actually free the data in the struct
+    vgDestroyPaint((color->paint));
+    //VGPaint dealloc(color->paint); //TODO: Look up syntax, implement
 	free(color);
 }
 
