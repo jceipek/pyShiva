@@ -6,7 +6,7 @@ def test():
 def get_mouse_pos():
     cdef int x
     cdef int y
-    cpyshiva.glfwGetMousePos(&x, &y)
+    cpyshiva.get_mouse_pos(&x, &y)
     return (x, y)
 
 cdef class Color:

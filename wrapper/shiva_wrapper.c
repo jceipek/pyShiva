@@ -150,6 +150,16 @@ void window_dealloc (Window *window) { // XXX: TODO: return deallocation success
 // END WINDOW
 //
 
+void get_mouse_pos(int *x, int *y) {
+	if (main_window != NULL) {
+		glfwGetMousePos(x, y);
+		*y = main_window->height - *y;
+	} else { // Window not allocated!
+		*x = 0;
+		*y = 0;
+	}
+}
+
 //
 // START LAYER_NODE
 void layerNode_add_end_node (LayerList *list, LayerNode *node) {

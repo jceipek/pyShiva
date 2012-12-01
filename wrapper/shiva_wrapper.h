@@ -96,5 +96,6 @@ void window_set_size (Window *window, int width, int height);
 void window_set_title (Window *window, char *title);
 int window_add_object (Window *window, Object *object);
 int window_remove_object (Window *window, Object *object);
+void get_mouse_pos(int *x, int *y);
 
 int demo();

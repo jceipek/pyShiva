@@ -6,5 +6,5 @@ w.add(paddle)
 
 while w.is_open():
 	x,y = ps.get_mouse_pos()
-	paddle.y = (w.height - y) - paddle.height/2
+	paddle.y = y - paddle.height/2
 	w.refresh()
