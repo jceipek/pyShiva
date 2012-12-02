@@ -83,6 +83,8 @@ typedef struct Window {
 	//	How much time passed since last refresh
 	//  How long since the window opened
 	double s_last_refresh_time;
+
+	VGfloat bg_color[4];
 } Window;
 
 Window *make_window (char *title, int width, int height);
@@ -96,6 +98,9 @@ void window_set_size (Window *window, int width, int height);
 void window_set_title (Window *window, char *title);
 int window_add_object (Window *window, Object *object);
 int window_remove_object (Window *window, Object *object);
+
+void window_set_bg(Window *window, float r, float g, float b);
+
 void get_mouse_pos(int *x, int *y);
 
 int demo();

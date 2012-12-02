@@ -32,7 +32,7 @@ cdef extern from "shiva_wrapper.h":
     Object *make_rect(float x, float y, float width, float height, Color *color)
     int window_add_object (Window *window, Object *object)
     int window_remove_object (Window *window, Object *object)
-
+    void window_set_bg(Window *window, float r, float g, float b)
     void get_mouse_pos(int *x, int *y)
 
     int demo()

@@ -151,6 +151,10 @@ cdef class Window:
         def __set__(self, int value):
             cpyshiva.window_set_size(self._c_window, self._c_window.width, value)
 
+    property bg_color:
+        def __set__(self, color):
+            cpyshiva.window_set_bg(self._c_window, <float>color[0], <float>color[1], <float>color[2])
+
     def is_open(self):
         return cpyshiva.window_isopen(self._c_window)
 
