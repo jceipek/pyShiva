@@ -230,7 +230,7 @@ LayerNode *make_layerNode() {
 
 void layerNode_dealloc(LayerNode *node) {
 	// TODO: Test this!!!
-    object_dealloc(node->contents);
+    //object_dealloc(node->contents);
     free(node);
 }
 // END LAYER_NODE
@@ -291,12 +291,12 @@ void object_dealloc(Object *object) {
         layerList_dealloc(object->contains);
         free(object);
     }
-    /*
+    
     if (object->path_data != NULL) {
     	vgDestroyPath(object->path_data);
         //VGPath free(object->path_data); //TODO: Look up syntax, implement
     }
-    */
+    
     // NOTE: the color ref'd by color_ref needs to get deallocated manually elsewhere
     //free(object);
 }
@@ -332,9 +332,7 @@ Color *make_color (float r, float g, float b, float a) {
 }
 
 void color_dealloc (Color *color) {
-	// TODO: XXX: Actually free the data in the struct
     vgDestroyPaint(color->paint);
-    //VGPaint dealloc(color->paint); //TODO: Look up syntax, implement
 	free(color);
 }
 
@@ -347,15 +345,16 @@ int demo() {
 	Color *color = make_color(1,1,1,1);
 
 	int i;
+	Object *objects[6];
 	for (i = 0; i < 3; i++) {
-		Object *object = make_rect(i*120, 0, 50, 50, color);
-		window_add_object(win, object);
+		objects[i] = make_rect(i*120, 0, 50, 50, color);
+		window_add_object(win, objects[i]);
 	}
 	Object *demo_object = make_rect(100, 300, 100, 50, color);
 	window_add_object(win, demo_object);
-	for (i = 0; i < 3; i++) {
-		Object *object = make_rect(i*120, 200, 50, 20, color);
-		window_add_object(win, object);
+	for (i = 3; i < 6; i++) {
+		objects[i] = make_rect((i-3)*120, 200, 50, 20, color);
+		window_add_object(win, objects[i]);
 	}
 
 	window_remove_object(win, demo_object);
@@ -367,6 +366,11 @@ int demo() {
 		// Terminate when ESC is pressed or the window is closed
 		running = !glfwGetKey(GLFW_KEY_ESC) && window_isopen(win);
 	}
+
+	for (i = 0; i < 6; i++) {
+		object_dealloc(objects[i]);
+	}
+	object_dealloc(demo_object);
 
 	color_dealloc(color);
 	// Close the window, clean up the ShivaVG context, and clean up GLFW
