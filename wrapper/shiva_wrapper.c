@@ -269,7 +269,7 @@ Object *make_object(float x, float y) {
 	object->contains = NULL;
 	object->layer_node = NULL;
 	object->path_data = NULL;
-	object->fill = NULL;
+	object->fill_ref = NULL;
 	return object;
 }
 
@@ -280,7 +280,7 @@ Object *make_rect(float x, float y, float width, float height, Color *fill) {
 	vguRect(path, 0, 0, width, height);
 
 	object->path_data = path;
-	object->fill = fill;
+	object->fill_ref = fill;
 
 	return object;
 }
@@ -291,18 +291,17 @@ void object_dealloc(Object *object) {
         layerList_dealloc(object->contains);
     }
     if (object->path_data != NULL) {
+    	vgDestroyPath(object->path_data);
         //VGPath free(object->path_data); //TODO: Look up syntax, implement
     }
-    if (object->fill != NULL) {
-        color_dealloc(object->fill);
-	}
+    // NOTE: the color ref'd by color_ref needs to get deallocated manually elsewhere
     free(object);
 }
 
 void object_draw (Object *object, float x, float y) {
 	vgTranslate(x, y);
 	if (object->contains == NULL) {
-		vgSetPaint(object->fill->paint, VG_FILL_PATH);
+		vgSetPaint(object->fill_ref->paint, VG_FILL_PATH);
 		vgDrawPath(object->path_data, VG_FILL_PATH); // TODO: Make this not just be a rect!
 	} else {
 		LayerNode *curr;
@@ -331,7 +330,7 @@ Color *make_color (float r, float g, float b, float a) {
 
 void color_dealloc (Color *color) {
 	// TODO: XXX: Actually free the data in the struct
-    vgDestroyPaint((color->paint));
+    vgDestroyPaint(color->paint);
     //VGPaint dealloc(color->paint); //TODO: Look up syntax, implement
 	free(color);
 }
@@ -366,6 +365,7 @@ int demo() {
 		running = !glfwGetKey(GLFW_KEY_ESC) && window_isopen(win);
 	}
 
+	color_dealloc(color);
 	// Close the window, clean up the ShivaVG context, and clean up GLFW
 	window_dealloc(win);
 	

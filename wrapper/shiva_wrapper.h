@@ -53,6 +53,7 @@ void layerList_dealloc(LayerList *list);
 // Color
 typedef struct Color {
 	VGPaint *paint;
+
 } Color;
 
 Color *make_color(float r, float g, float b, float a);
@@ -65,7 +66,7 @@ typedef struct Object {
 	struct LayerNode *layer_node; // Set to NULL unless it is part of a Group or Window
 	// TODO: Use a union?
 	VGPath *path_data; // Set to NULL if it is a Group
-	struct Color *fill; // Set to NULL if it is a Group
+	struct Color *fill_ref; // Set to NULL if it is a Group
 } Object;
 
 Object *make_object(float x, float y);
