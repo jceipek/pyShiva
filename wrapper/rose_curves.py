@@ -22,10 +22,13 @@ for i in range(1000):
 
 k = 0.25
 while w.is_open():
+    x,y = ps.get_mouse_pos()
+    k = float(x)/w.width # Set the curve type based on the x position of the mouse
+    print k
     t = w.s_since_open()*2 # Use a scaled time since program start as the parametric time value
     radius = abs(math.sin(w.s_since_open()))
-    if radius < 0.01: # Every time the curve collapses...
-        k = random.random() # Randomize the k value to change the type of the curve
+    #if radius < 0.01: # Every time the curve collapses...
+    #    k = random.random() # Randomize the k value to change the type of the curve
     # Place every rectangle along a rose curve, offset by its index
     for (i,r) in enumerate(all_rects):
         r.x = radius*math.cos(k*(t+i))*math.sin(t+i)*w.width/2+w.width/2

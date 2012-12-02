@@ -4,7 +4,7 @@ pyShiva
 The PyShiva project is an experiment in bringing lightning fast high quality 2d graphics to python via the `pyshiva` module.
 It aims to provide a simple vector-based API on top of the OpenGL-powered ShivaVG library.
 
-![Demo](https://raw.github.com/jceipek/pyShiva/master/screenshots/RoseCurves.png "pyShiva Rose Curves")
+![Demo](https://raw.github.com/jceipek/pyShiva/master/screenshots/RoseCurves2.png "pyShiva Rose Curves")
 
 This is how easy it is to write a complete pyShiva program!
 
