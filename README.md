@@ -4,7 +4,46 @@ pyShiva
 The PyShiva project is an experiment in bringing lightning fast high quality 2d graphics to python via the `pyshiva` module.
 It aims to provide a simple vector-based API on top of the OpenGL-powered ShivaVG library.
 
-![Demo](https://raw.github.com/jceipek/pyShiva/master/screenshots/ManyObjectsDemo.png "pyShiva Many Objects Demo")
+![Demo](https://raw.github.com/jceipek/pyShiva/master/screenshots/RoseCurves.png "pyShiva Rose Curves")
+
+This is how easy it is to write a complete pyShiva program!
+
+	#
+	# Rose Curves Demo
+	#
+
+	# Import the python module
+	import pyshiva as ps
+	import math, random
+
+	# Create a window with the title "Rose Curves"
+	w = ps.Window(title = "Rose Curves")
+
+	all_rects = list()
+
+	# Create 1000 squares with different colors
+	for i in range(1000):
+		r = random.random()
+		a = abs(math.cos(i))*0.5
+		side_length = abs(math.sin(i))*50
+		r = ps.Rect(0,0,side_length,side_length,(r,math.sin(i),math.cos(i),a))
+		w.add(r) # Add the rectangles to the window...
+		all_rects.append(r) # and keep track of them with a list
+
+	k = 0.25
+	while w.is_open():
+		t = w.s_since_open()*2 # Use a scaled time since program start as the parametric time value
+		radius = abs(math.sin(w.s_since_open()))
+		if radius < 0.01: # Every time the curve collapses...
+			k = random.random() # Randomize the k value to change the type of the curve
+		# Place every rectangle along a rose curve, offset by its index
+		for (i,r) in enumerate(all_rects):
+			r.x = radius*math.cos(k*(t+i))*math.sin(t+i)*w.width/2+w.width/2
+			r.y = radius*math.sin(k*(t+i))*math.sin(t+i)*w.height/2+w.height/2
+
+		# Update the screen
+		w.refresh()
+
 
 Status
 -------
@@ -14,27 +53,6 @@ Currently under heavy development.
 Full Documentation and Implementation Spec
 -------------------------------------------
 [Read it here](https://docs.google.com/document/d/1qF8y-nfQE38GGET-e_7vlTTwCGvvnqZUdMKl-cHi_js/edit). You can edit if if you are a collaborator.
-
-Simple Example
----------------
-This is how easy it is to write a complete pyShiva program!
-
-	# Import the python module
-	import pyshiva as ps
-
-	# Create a window with a title
-	win = ps.Window("My First PyShiva Project!", width=640, height=480)
-	
-	# Create a rectangle at position (10,10) with a width of 100 and height of 50
-	r = ps.Rect(10, 10, 100, 50)
-
-	# Add the rectangle to the window
-	win.add(r)
-
-	# Until the user presses the close button of the window...
-	while win.is_open():
-		# ...update the screen and respond to events. Before the first time you do this, the rectangle won't be visible.
-		win.refresh()
 
 Compiling ShivaVG on Ubuntu
 ----------------------------
