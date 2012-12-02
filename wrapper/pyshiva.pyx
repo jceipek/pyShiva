@@ -64,6 +64,9 @@ cdef class Color:
     def __str__(self):
         return "Color with r:%f g:%f b:%f a:%f" % (self._r, self._g, self._b, self._a)
 
+    def __dealloc__(self):
+        cpyshiva.color_dealloc(self._c_color)
+
 cdef class Entity:
     cdef bint _inited
     cdef cpyshiva.Object *_c_object
@@ -89,6 +92,9 @@ cdef class Entity:
             return self._c_object.y
         def __set__(self, float value):
             self._c_object.y = value
+
+    def __dealloc__(self):
+        cpyshiva.object_dealloc(self._c_object)
 
 cdef class Rect(Entity):
     """A Rect that can be added to groups and the window
@@ -124,6 +130,8 @@ cdef class Rect(Entity):
 
     def __str__(self):
         return "Rect at (%f, %f) with size (%f,%f)" % (self.x, self.y, self.width, self.height)
+
+    # Dealloc inherited from Entity
 
 cdef class Window:
     """A Window that can be created with pyshiva
@@ -174,8 +182,6 @@ cdef class Window:
         return cpyshiva.glfwGetTime() - self._c_window.s_last_refresh_time
 
     def __dealloc__(self):
-        # This is where we want to clean up memory.
         cpyshiva.window_dealloc(self._c_window)
-        print "Deallocatin'"
 
 
