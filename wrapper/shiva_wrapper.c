@@ -289,13 +289,16 @@ void object_dealloc(Object *object) {
 	// TODO: Implement this!
     if (object->contains != NULL) {
         layerList_dealloc(object->contains);
+        free(object);
     }
+    /*
     if (object->path_data != NULL) {
     	vgDestroyPath(object->path_data);
         //VGPath free(object->path_data); //TODO: Look up syntax, implement
     }
+    */
     // NOTE: the color ref'd by color_ref needs to get deallocated manually elsewhere
-    free(object);
+    //free(object);
 }
 
 void object_draw (Object *object, float x, float y) {
@@ -368,6 +371,7 @@ int demo() {
 	color_dealloc(color);
 	// Close the window, clean up the ShivaVG context, and clean up GLFW
 	window_dealloc(win);
+	//does not deallocate objects
 	
 	return 0;
 }

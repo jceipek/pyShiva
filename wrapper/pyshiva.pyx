@@ -93,9 +93,9 @@ cdef class Entity:
         def __set__(self, float value):
             self._c_object.y = value
 
-    #def __dealloc__(self):
+    def __dealloc__(self):
     # TODO: Add this back in after making it so that closing the window does not delete the objects in it.
-    #    cpyshiva.object_dealloc(self._c_object)
+        cpyshiva.object_dealloc(self._c_object)
 
 cdef class Rect(Entity):
     """A Rect that can be added to groups and the window
