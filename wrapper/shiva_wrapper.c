@@ -285,6 +285,16 @@ Object *make_rect(float x, float y, float width, float height, Color *fill) {
 	return object;
 }
 
+void resize_rect(float width, float height, Object *rect){
+	vguRect(rect->path_data, 0, 0, width, height);
+}
+
+
+void recolor_rect(Object *rect, Color *fill){
+	color_dealloc(rect->fill_ref);
+	rect->fill_ref = fill;
+}
+
 void object_dealloc(Object *object) {
 	// TODO: Implement this!
     if (object->contains != NULL) {
@@ -296,7 +306,6 @@ void object_dealloc(Object *object) {
     	vgDestroyPath(object->path_data);
         //VGPath free(object->path_data); //TODO: Look up syntax, implement
     }
-    
     // NOTE: the color ref'd by color_ref needs to get deallocated manually elsewhere
     //free(object);
 }
