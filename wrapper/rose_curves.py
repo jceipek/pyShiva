@@ -27,7 +27,7 @@ while w.is_open():
     radius = abs(math.sin(w.s_since_open()))
     if radius < 0.01: # Every time the curve collapses...
         k = random.random() # Randomize the k value to change the type of the curve
-    #k = float(x)/w.width
+    k = float(x)/w.width
     print k
     #k = 0.760935
     # Place every rectangle along a rose curve, offset by its index

@@ -27,7 +27,7 @@ for x in range(10):
 #changes which color each square is based on the time.  This means swapping out colors, not creating new colors.
 oldt = 0
 while w.is_open():
-    t = w.s_since_open()
+    t = w.s_since_open()*10
     for x in range(10):
         for y in range(10):
             r = all_rects[y*10+x]
