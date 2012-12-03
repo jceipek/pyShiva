@@ -291,7 +291,6 @@ void resize_rect(float width, float height, Object *rect){
 
 
 void recolor_rect(Object *rect, Color *fill){
-	color_dealloc(rect->fill_ref);
 	rect->fill_ref = fill;
 }
 
