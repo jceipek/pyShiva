@@ -116,21 +116,22 @@ cdef class Rect(Entity):
         def __get__(self):
             return self._width
         def __set__(self, value):
-            # TODO: Implement!
-            print "width cannot be set yet!"
+            cpyshiva.resize_rect(value, self.height, self._c_object)
 
     property height:
         def __get__(self):
             return self._height
         def __set__(self, value):
-            # TODO: Implement!
-            print "height cannot be set yet!"
+            cpyshiva.resize_rect(self.width, value, self._c_object)
 
     def __repr__(self):
         return str((self.x, self.y, self.width, self.height))
 
     def __str__(self):
         return "Rect at (%f, %f) with size (%f,%f)" % (self.x, self.y, self.width, self.height)
+
+    def recolor(self, color=(1,1,1,1)):
+        cpyshiva.recolor_rect(self._c_object, cpyshiva.make_color(color[0], color[1], color[2], color[3]))
 
     # Dealloc inherited from Entity
 
