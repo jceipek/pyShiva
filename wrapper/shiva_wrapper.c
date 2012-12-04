@@ -230,7 +230,7 @@ LayerNode *make_layerNode() {
 
 void layerNode_dealloc(LayerNode *node) {
 	// TODO: Test this!!!
-	if (node->contents->contains != NULL)
+	if (node->contents->type == OBJECT_GROUP)
 	{
 		object_dealloc(node->contents);
 	}
@@ -301,7 +301,7 @@ void recolor_rect(Object *rect, Color *fill){
 
 void object_dealloc(Object *object) {
 	// TODO: Implement this!
-    if (object->type = OBJECT_GROUP) {
+    if (object->type == OBJECT_GROUP) {
         layerList_dealloc(object->contains);
     }
     
@@ -337,6 +337,7 @@ void object_draw (Object *object, float x, float y) {
 Object *make_group(float x, float y) {
 	Object *group = make_object(x, y);
 	group->contains = make_layerList();
+	group->type = OBJECT_GROUP;
 	return group;
 }
 
@@ -361,7 +362,7 @@ int group_remove_object (Object *group, Object *object) {
 }
 
 void *group_dealloc(Object *group) {
-	layerList_dealloc(group->contains);
+	//layerList_dealloc(group->contains);
 	object_dealloc(group);
 }
 
@@ -410,12 +411,15 @@ int demo() {
 	Window *win = make_window("HELLO", 640, 480);
 
 	Color *color = make_color(1,1,1,1);
+	Object *group = make_group(0,0);
 
 	int i;
 	int n = 16;
 	Object *objects[10];
 	for (i = 0; i < 3; i++) {
 		objects[i] = make_rect(i*120, 0, 50, 50, color);
+		group_add_object(group, objects[i]);
+
 		//window_add_object(win, objects[i]);
 	}
 	//Object *demo_object = make_rect(100, 300, 100, 50, color);
@@ -429,14 +433,16 @@ int demo() {
 
 	window_remove_object(win, demo_object);
 	window_add_object(win, demo_object);
-
+*/
+	window_add_object(win, group);
 	while (running) {
 		window_refresh(win);
 
 		// Terminate when ESC is pressed or the window is closed
 		running = !glfwGetKey(GLFW_KEY_ESC) && window_isopen(win);
 	}
-	*/
+
+	group_dealloc(group);
 
 	for (i = 0; i < 10; i++) {
 		object_dealloc(objects[i]);
