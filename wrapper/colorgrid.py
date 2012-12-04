@@ -13,7 +13,7 @@ all_rects = list()
 all_colors = list()
 # Creats a list of 10 colors, ranging from blue to red
 for i in range(10):
-    testColor = (1-.1*i,0,.1*i,1)
+    testColor = ps.Color(1-.1*i,0,.1*i,1)
     all_colors.append(testColor)
 
 #creates a 10 by 10 grid of squares, choosing from the list of colors

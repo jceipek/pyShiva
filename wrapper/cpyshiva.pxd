@@ -21,6 +21,8 @@ cdef extern from "shiva_wrapper.h":
         pass
     Color *make_color(float r, float g, float b, float a)
     void *color_dealloc(Color *color)
+    Color *color_change(Color *color, float val, int color_elem)
+
 
     ctypedef struct Object:
         float x

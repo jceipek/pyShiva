@@ -331,18 +331,36 @@ Color *make_color (float r, float g, float b, float a) {
 	// TODO: More checking during allocation
 	Color *color = check_malloc(sizeof(Color));
 	VGPaint paint;
-	VGfloat paint_array[] = {r, g, b, a};
+	VGfloat *paint_array = check_malloc(sizeof(VGfloat)*4);
+	paint_array[0] = r;
+	paint_array[1] = g;
+	paint_array[2] = b;
+	paint_array[3] = a;
 	paint = vgCreatePaint();
     vgSetParameterfv(paint, VG_PAINT_COLOR, 4, paint_array);
     color->paint = paint;
+    color->paint_array = paint_array;
 
     return color;
 }
 
 void color_dealloc (Color *color) {
     vgDestroyPaint(color->paint);
+    free(color->paint_array);
 	free(color);
 }
+
+
+Color *color_change (Color *color, float val, int color_elem) {
+	vgDestroyPaint(color->paint);
+	color->paint_array[color_elem] = val;
+	VGPaint newPaint = vgCreatePaint();
+	vgSetParameterfv(newPaint, VG_PAINT_COLOR, 4, color->paint_array);
+    color->paint = newPaint;
+
+    return color;
+}
+
 
 int demo() {
 	int running = GL_TRUE;
