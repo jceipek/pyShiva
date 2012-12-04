@@ -230,7 +230,10 @@ LayerNode *make_layerNode() {
 
 void layerNode_dealloc(LayerNode *node) {
 	// TODO: Test this!!!
-    //object_dealloc(node->contents);
+	if (node->contents->contains != NULL)
+	{
+		object_dealloc(node->contents);
+	}
     free(node);
 }
 // END LAYER_NODE
@@ -299,7 +302,6 @@ void object_dealloc(Object *object) {
 	// TODO: Implement this!
     if (object->contains != NULL) {
         layerList_dealloc(object->contains);
-        free(object);
     }
     
     if (object->path_data != NULL) {
@@ -307,7 +309,7 @@ void object_dealloc(Object *object) {
         //VGPath free(object->path_data); //TODO: Look up syntax, implement
     }
     // NOTE: the color ref'd by color_ref needs to get deallocated manually elsewhere
-    //free(object);
+    free(object);
 }
 
 void object_draw (Object *object, float x, float y) {
@@ -354,17 +356,20 @@ int demo() {
 	Color *color = make_color(1,1,1,1);
 
 	int i;
-	Object *objects[6];
+	int n = 16;
+	Object *objects[10];
 	for (i = 0; i < 3; i++) {
 		objects[i] = make_rect(i*120, 0, 50, 50, color);
-		window_add_object(win, objects[i]);
+		//window_add_object(win, objects[i]);
 	}
-	Object *demo_object = make_rect(100, 300, 100, 50, color);
-	window_add_object(win, demo_object);
-	for (i = 3; i < 6; i++) {
+	//Object *demo_object = make_rect(100, 300, 100, 50, color);
+	//window_add_object(win, demo_object);
+	for (i = 3; i < 10; i++) {
 		objects[i] = make_rect((i-3)*120, 200, 50, 20, color);
-		window_add_object(win, objects[i]);
+		//if (i<6)
+	//		window_add_object(win, objects[i]);
 	}
+	/*
 
 	window_remove_object(win, demo_object);
 	window_add_object(win, demo_object);
@@ -375,11 +380,13 @@ int demo() {
 		// Terminate when ESC is pressed or the window is closed
 		running = !glfwGetKey(GLFW_KEY_ESC) && window_isopen(win);
 	}
+	*/
 
-	for (i = 0; i < 6; i++) {
+	for (i = 0; i < 10; i++) {
 		object_dealloc(objects[i]);
 	}
-	object_dealloc(demo_object);
+	//object_dealloc(demo_object);
+	//free(objects);
 
 	color_dealloc(color);
 	// Close the window, clean up the ShivaVG context, and clean up GLFW
