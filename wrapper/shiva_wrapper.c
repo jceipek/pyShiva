@@ -318,9 +318,9 @@ void object_draw (Object *object, float x, float y) {
 		LayerNode *curr;
 		curr = object->contains->first;
 		while (curr != NULL) {
-			curr = curr->next;
 			vgLoadIdentity();
 			object_draw (curr->contents, x+curr->contents->x, y+curr->contents->y);
+			curr = curr->next;
 		}
 	}
 }
