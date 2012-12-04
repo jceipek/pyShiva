@@ -29,11 +29,15 @@ while w.is_open():
         k = random.random() # Randomize the k value to change the type of the curve
     k = float(x)/w.width
     print k
+    print r.width
     #k = 0.760935
     # Place every rectangle along a rose curve, offset by its index
     for (i,r) in enumerate(all_rects):
         r.x = radius*math.cos(k*(t+i))*math.sin(t+i)*w.width/2+w.width/2
         r.y = radius*math.sin(k*(t+i))*math.sin(t+i)*w.height/2+w.height/2
-
+        #print abs(10*math.sin(t))
+        r.width = 1.32303762436 #100000 #abs(100*math.sin(t))
+        #r.height = 100000 #abs(100*math.sin(t))
+        
     # Update the screen
     w.refresh()
