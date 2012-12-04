@@ -21,6 +21,8 @@ cdef extern from "shiva_wrapper.h":
         pass
     Color *make_color(float r, float g, float b, float a)
     void *color_dealloc(Color *color)
+    Color *color_change(Color *color, float val, int color_elem)
+
 
     ctypedef struct Object:
         float x
@@ -38,5 +40,10 @@ cdef extern from "shiva_wrapper.h":
     int window_remove_object (Window *window, Object *object)
     void window_set_bg(Window *window, float r, float g, float b)
     void get_mouse_pos(int *x, int *y)
+
+    Object *make_group(float x, float y)
+    int group_add_object (Object *group, Object *object)
+    int group_remove_object (Object *group, Object *object)
+    void *group_dealloc(Object *group)
 
     int demo()
