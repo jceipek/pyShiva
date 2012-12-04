@@ -269,6 +269,7 @@ Object *make_object(float x, float y) {
 	Object *object = check_malloc(sizeof(Object));
 	object->x = x;
 	object->y = y;
+	object->type = OBJECT_GENERIC;
 	object->contains = NULL;
 	object->layer_node = NULL;
 	object->path_data = NULL;
@@ -284,6 +285,7 @@ Object *make_rect(float x, float y, float width, float height, Color *fill) {
 
 	object->path_data = path;
 	object->fill_ref = fill;
+	object->type = OBJECT_RECT;
 
 	return object;
 }
@@ -299,7 +301,7 @@ void recolor_rect(Object *rect, Color *fill){
 
 void object_dealloc(Object *object) {
 	// TODO: Implement this!
-    if (object->contains != NULL) {
+    if (object->type = OBJECT_GROUP) {
         layerList_dealloc(object->contains);
     }
     
@@ -313,7 +315,7 @@ void object_dealloc(Object *object) {
 
 void object_draw (Object *object, float x, float y) {
 	vgTranslate(x, y);
-	if (object->contains == NULL) {
+	if (object->type != OBJECT_GROUP) {
 		vgSetPaint(object->fill_ref->paint, VG_FILL_PATH);
 		vgDrawPath(object->path_data, VG_FILL_PATH); // TODO: Make this not just be a rect!
 	} else {
