@@ -53,11 +53,15 @@ void layerList_dealloc(LayerList *list);
 // Color
 typedef struct Color {
 	VGPaint *paint;
+	VGfloat *paint_array;
 
 } Color;
 
 Color *make_color(float r, float g, float b, float a);
 void color_dealloc(Color *color);
+Color *color_change (Color *color, float val, int color_elem);
+
+
 
 // Object
 typedef struct Object {

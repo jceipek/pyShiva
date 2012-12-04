@@ -27,25 +27,30 @@ cdef class Color:
         def __get__(self):
             return self._r
         def __set__(self, float value):
-            print "Colors are currently immutable (you can't change them)!"
+            self._r = value
+            self._c_color = cpyshiva.color_change(self._c_color, value, 0)
+
 
     property g:
         def __get__(self):
             return self._g
         def __set__(self, float value):
-            print "Colors are currently immutable (you can't change them)!"
+            self._g = value
+            self._c_color = cpyshiva.color_change(self._c_color, value, 1)
 
     property b:
         def __get__(self):
             return self._b
         def __set__(self, float value):
-            print "Colors are currently immutable (you can't change them)!"
+            self._b = value
+            self._c_color = cpyshiva.color_change(self._c_color, value, 2)
 
     property a:
         def __get__(self):
             return self._a
         def __set__(self, float value):
-            print "Colors are currently immutable (you can't change them)!"
+            self._a = value
+            self._c_color = cpyshiva.color_change(self._c_color, value, 3)
 
     def __getitem__(self, int index):
         if index == 0:
