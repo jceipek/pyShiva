@@ -74,6 +74,10 @@ typedef struct Object {
 } Object;
 
 Object *make_object(float x, float y);
+Object *make_group(float x, float y);
+int group_add_object (Object *group, Object *object);
+int group_remove_object (Object *group, Object *object);
+void *group_dealloc(Object *group);
 Object *make_rect(float x, float y, float width, float height, Color *fill);
 void object_dealloc(Object *object);
 void object_draw (Object *object, float x, float y);

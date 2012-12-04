@@ -327,6 +327,43 @@ void object_draw (Object *object, float x, float y) {
 // END OBJECT
 //
 
+//
+// START GROUP
+
+Object *make_group(float x, float y) {
+	Object *group = make_object(x, y);
+	group->contains = make_layerList();
+	return group;
+}
+
+int group_add_object (Object *group, Object *object) {
+	if (object->layer_node == NULL) {
+		LayerNode *node = make_layerNode();
+		node->contents = object;
+		object->layer_node = node;
+		layerNode_add_end_node(group->contains, node);
+		return 1; //Succeeded
+	}
+	return 0; // Failed; object is already part of something else
+}
+
+int group_remove_object (Object *group, Object *object) {
+	if (object->layer_node->layer_list_ref != group->contains) { //if object is in group:
+		layerNode_remove(group->contains, object->layer_node);
+		object->layer_node = NULL;
+		return 1; //Succeeded
+	}
+	return 0; // Failed; object is not part of group->contains
+}
+
+void *group_dealloc(Object *group) {
+	layerList_dealloc(group->contains);
+	object_dealloc(group);
+}
+
+// END GROUP
+//
+
 Color *make_color (float r, float g, float b, float a) {
 	// TODO: More checking during allocation
 	Color *color = check_malloc(sizeof(Color));

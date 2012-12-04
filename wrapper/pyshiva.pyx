@@ -102,6 +102,25 @@ cdef class Entity:
     # TODO: Add this back in after making it so that closing the window does not delete the objects in it.
         cpyshiva.object_dealloc(self._c_object)
 
+# Groups don't work yet!
+'''
+cdef class Group(Entity):
+    """A Group
+
+    """
+    def __init__(self, float x=0, float y=0):
+        if not self._inited:
+            print "Made group"
+            self._inited = True
+            self._c_object = cpyshiva.make_group(x, y)
+
+    def add(self, Entity obj):
+        cpyshiva.group_add_object(self._c_object, obj._c_object)
+
+    def remove(self, Entity obj):
+        cpyshiva.group_remove_object(self._c_object, obj._c_object)
+'''
+
 cdef class Rect(Entity):
     """A Rect that can be added to groups and the window
 

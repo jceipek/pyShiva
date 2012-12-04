@@ -41,4 +41,9 @@ cdef extern from "shiva_wrapper.h":
     void window_set_bg(Window *window, float r, float g, float b)
     void get_mouse_pos(int *x, int *y)
 
+    Object *make_group(float x, float y)
+    int group_add_object (Object *group, Object *object)
+    int group_remove_object (Object *group, Object *object)
+    void *group_dealloc(Object *group)
+
     int demo()
