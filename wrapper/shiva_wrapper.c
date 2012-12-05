@@ -230,8 +230,12 @@ LayerNode *make_layerNode() {
 
 void layerNode_dealloc(LayerNode *node) {
 	// TODO: Test this!!!
-    //object_dealloc(node->contents);
-    free(node);
+
+	if (node->contents != NULL && node->contents->type == OBJECT_GROUP)
+	{
+		object_dealloc(node->contents);
+	}
+	free(node);
 }
 // END LAYER_NODE
 //
@@ -266,6 +270,7 @@ Object *make_object(float x, float y) {
 	Object *object = check_malloc(sizeof(Object));
 	object->x = x;
 	object->y = y;
+	object->type = OBJECT_GENERIC;
 	object->contains = NULL;
 	object->layer_node = NULL;
 	object->path_data = NULL;
@@ -281,6 +286,7 @@ Object *make_rect(float x, float y, float width, float height, Color *fill) {
 
 	object->path_data = path;
 	object->fill_ref = fill;
+	object->type = OBJECT_RECT;
 
 	return object;
 }
@@ -296,28 +302,35 @@ void recolor_rect(Object *rect, Color *fill){
 
 void object_dealloc(Object *object) {
 	// TODO: Implement this!
-    if (object->contains != NULL) {
+
+	if (object->layer_node != NULL){
+		object->layer_node->contents = NULL;
+		object->layer_node = NULL;
+    	//layerNode_dealloc(object->layer_node);
+    }
+    else if (object->type == OBJECT_GROUP) {
         layerList_dealloc(object->contains);
-        free(object);
     }
     
-    if (object->path_data != NULL) {
+    else if (object->path_data != NULL) {
     	vgDestroyPath(object->path_data);
         //VGPath free(object->path_data); //TODO: Look up syntax, implement
     }
     // NOTE: the color ref'd by color_ref needs to get deallocated manually elsewhere
-    //free(object);
+
+    free(object);
 }
 
 void object_draw (Object *object, float x, float y) {
 	vgTranslate(x, y);
-	if (object->contains == NULL) {
+	if (object->type != OBJECT_GROUP) {
 		vgSetPaint(object->fill_ref->paint, VG_FILL_PATH);
 		vgDrawPath(object->path_data, VG_FILL_PATH); // TODO: Make this not just be a rect!
 	} else {
 		LayerNode *curr;
 		curr = object->contains->first;
 		while (curr != NULL) {
+			//curr = curr->next;
 			vgLoadIdentity();
 			object_draw (curr->contents, x+curr->contents->x, y+curr->contents->y);
 			curr = curr->next;
@@ -333,6 +346,8 @@ void object_draw (Object *object, float x, float y) {
 Object *make_group(float x, float y) {
 	Object *group = make_object(x, y);
 	group->contains = make_layerList();
+	group->layer_node = NULL;
+	group->type = OBJECT_GROUP;
 	return group;
 }
 
@@ -357,7 +372,7 @@ int group_remove_object (Object *group, Object *object) {
 }
 
 void *group_dealloc(Object *group) {
-	layerList_dealloc(group->contains);
+	//layerList_dealloc(group->contains);
 	object_dealloc(group);
 }
 
@@ -406,22 +421,34 @@ int demo() {
 	Window *win = make_window("HELLO", 640, 480);
 
 	Color *color = make_color(1,1,1,1);
+	Object *group = make_group(0,0);
+	Object *group2 = make_group(0,0);
 
 	int i;
-	Object *objects[6];
+	int n = 16;
+	Object *objects[10];
 	for (i = 0; i < 3; i++) {
 		objects[i] = make_rect(i*120, 0, 50, 50, color);
-		window_add_object(win, objects[i]);
+		group_add_object(group, objects[i]);
+
+		//window_add_object(win, objects[i]);
 	}
-	Object *demo_object = make_rect(100, 300, 100, 50, color);
-	window_add_object(win, demo_object);
-	for (i = 3; i < 6; i++) {
+	//Object *demo_object = make_rect(100, 300, 100, 50, color);
+	//window_add_object(win, demo_object);
+	for (i = 3; i < 10; i++) {
 		objects[i] = make_rect((i-3)*120, 200, 50, 20, color);
-		window_add_object(win, objects[i]);
+		group_add_object(group2, objects[i]);
+		//if (i<6)
+	//		window_add_object(win, objects[i]);
 	}
+	/*
 
 	window_remove_object(win, demo_object);
 	window_add_object(win, demo_object);
+*/
+	group_add_object(group, group2);
+
+	window_add_object(win, group);
 
 	while (running) {
 		window_refresh(win);
@@ -430,10 +457,15 @@ int demo() {
 		running = !glfwGetKey(GLFW_KEY_ESC) && window_isopen(win);
 	}
 
-	for (i = 0; i < 6; i++) {
+	object_dealloc(group2);
+
+	object_dealloc(group); //segfaults
+
+	for (i = 0; i < 10; i++) {
 		object_dealloc(objects[i]);
 	}
-	object_dealloc(demo_object);
+	//object_dealloc(demo_object);
+	//free(objects);
 
 	color_dealloc(color);
 	// Close the window, clean up the ShivaVG context, and clean up GLFW

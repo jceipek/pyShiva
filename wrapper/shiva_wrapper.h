@@ -64,13 +64,19 @@ Color *color_change (Color *color, float val, int color_elem);
 
 
 // Object
+
+enum OBJECT_TYPE {OBJECT_GROUP, OBJECT_RECT, OBJECT_GENERIC};
 typedef struct Object {
 	float x, y;
-	struct LayerList *contains; // Set to NULL unless it is a Group
+	enum OBJECT_TYPE type;
+	union {
+		struct LayerList *contains; // Set to NULL unless it is a Group
+		struct {
+			VGPath *path_data; // Set to NULL if it is a Group
+			struct Color *fill_ref; // Set to NULL if it is a Group
+		};
+	};
 	struct LayerNode *layer_node; // Set to NULL unless it is part of a Group or Window
-	// TODO: Use a union?
-	VGPath *path_data; // Set to NULL if it is a Group
-	struct Color *fill_ref; // Set to NULL if it is a Group
 } Object;
 
 Object *make_object(float x, float y);
