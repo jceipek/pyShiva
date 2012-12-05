@@ -139,6 +139,7 @@ int window_isopen (Window *window) {
 
 void window_dealloc (Window *window) { // XXX: TODO: return deallocation success as a flag
 	if (main_window != NULL) {
+		
 
 		free(window->title);
         layerList_dealloc(window->contents); //TODO: Make sure implemented
@@ -148,6 +149,7 @@ void window_dealloc (Window *window) { // XXX: TODO: return deallocation success
         
         // Clean up the ShivaVG context
 		vgDestroyContextSH();
+
 		// Close window and terminate GLFW
 		glfwTerminate();
 	} else {
@@ -324,8 +326,7 @@ void object_draw (Object *object, float x, float y) {
 	if (object->type != OBJECT_GROUP) {
 		vgSetPaint(object->fill_ref->paint, VG_FILL_PATH);
 		vgDrawPath(object->path_data, VG_FILL_PATH); // TODO: Make this not just be a rect!
-	} 
-	else {
+	} else {
 		LayerNode *curr;
 		curr = object->contains->first;
 		while (curr != NULL) {
@@ -470,5 +471,6 @@ int demo() {
 	// Close the window, clean up the ShivaVG context, and clean up GLFW
 	window_dealloc(win);
 	//does not deallocate objects
+	
 	return 0;
 }
