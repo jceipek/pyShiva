@@ -46,4 +46,6 @@ cdef extern from "shiva_wrapper.h":
     int group_remove_object (Object *group, Object *object)
     void *group_dealloc(Object *group)
 
+    void module_dealloc()
+
     int demo()

@@ -83,7 +83,6 @@ Object *make_object(float x, float y);
 Object *make_group(float x, float y);
 int group_add_object (Object *group, Object *object);
 int group_remove_object (Object *group, Object *object);
-void *group_dealloc(Object *group);
 Object *make_rect(float x, float y, float width, float height, Color *fill);
 void object_dealloc(Object *object);
 void object_draw (Object *object, float x, float y);
@@ -117,5 +116,7 @@ int window_remove_object (Window *window, Object *object);
 void window_set_bg(Window *window, float r, float g, float b);
 
 void get_mouse_pos(int *x, int *y);
+
+void module_dealloc();
 
 int demo();

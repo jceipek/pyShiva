@@ -225,4 +225,8 @@ cdef class Window:
     def __dealloc__(self):
         cpyshiva.window_dealloc(self._c_window)
 
+cdef class __global_context__:
+    def __dealloc__(self):
+        cpyshiva.module_dealloc()
 
+ctx = __global_context__()

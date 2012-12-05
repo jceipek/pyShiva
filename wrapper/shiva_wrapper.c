@@ -146,12 +146,7 @@ void window_dealloc (Window *window) { // XXX: TODO: return deallocation success
 		free(window); // TODO: Check to see if deallocs are success!
 		window = NULL;
 		main_window = NULL;
-        
-        // Clean up the ShivaVG context
-		vgDestroyContextSH();
 
-		// Close window and terminate GLFW
-		glfwTerminate();
 	} else {
 		printf("%s\n", "WINDOW ALREADY DEALLOCATED!");
 	}
@@ -371,11 +366,6 @@ int group_remove_object (Object *group, Object *object) {
 	return 0; // Failed; object is not part of group->contains
 }
 
-void *group_dealloc(Object *group) {
-	//layerList_dealloc(group->contains);
-	object_dealloc(group);
-}
-
 // END GROUP
 //
 
@@ -413,6 +403,13 @@ Color *color_change (Color *color, float val, int color_elem) {
     return color;
 }
 
+void module_dealloc() {
+    // Clean up the ShivaVG context
+	vgDestroyContextSH();
+
+	// Close window and terminate GLFW
+	glfwTerminate();
+}
 
 int demo() {
 	int running = GL_TRUE;
@@ -471,6 +468,8 @@ int demo() {
 	// Close the window, clean up the ShivaVG context, and clean up GLFW
 	window_dealloc(win);
 	//does not deallocate objects
+
+	module_dealloc();
 	
 	return 0;
 }
