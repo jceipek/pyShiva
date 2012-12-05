@@ -49,6 +49,7 @@ void layerNode_dealloc(LayerNode *node);
 
 LayerList *make_layerList();
 void layerList_dealloc(LayerList *list);
+int check_layerlist(LayerList *list);
 
 // Color
 typedef struct Color {

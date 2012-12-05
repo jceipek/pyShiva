@@ -114,7 +114,7 @@ int window_add_object (Window *window, Object *object) {
 }
 
 int window_remove_object (Window *window, Object *object) { //TODO: Check object owner properly.
-	if (object->layer_node->layer_list_ref != window->contents) { //if object is in window:
+	if (object->layer_node->layer_list_ref == window->contents) { //if object is in window:
 		layerNode_remove(window->contents, object->layer_node);
 		object->layer_node = NULL;
 		return 1; //Succeeded
@@ -197,6 +197,7 @@ void layerNode_add_start_node (LayerList *list, LayerNode *node) {
 
 void layerNode_remove (LayerList *list, LayerNode *node) {
 	// Assumes that node is in list
+	printf("remove node from list\n");
 	if (list->first == node) {
 		list->first = node->next;
 	}
@@ -210,6 +211,10 @@ void layerNode_remove (LayerList *list, LayerNode *node) {
 	if (node->next != NULL) {
 		node->next->previous = node->previous;
 	}
+
+	//deallocate node without affecting contents
+	//node->contents = NULL;
+	//layerNode_dealloc(node);
 	// TODO: figure out if we should dealloc here!
 }
 
@@ -248,13 +253,45 @@ LayerList *make_layerList() {
 
 void layerList_dealloc(LayerList *list) {
 	// TODO: test this!!!
+	printf("layerlist_dealloc\n");
     LayerNode *node = list->first;
+    LayerNode *next;
+    printf("before while\n");
     while(node != NULL) {
-        LayerNode *next = node->next; 
+    	printf("dealloc while\n");
+        //LayerNode *next = node->next; 
+        next = node->next;
         layerNode_dealloc(node);
         node = next;
     }
+    printf("free\n");
 	free(list);
+}
+
+int check_layerlist(LayerList *list) {
+	if (list->first == NULL && list->last == NULL){
+		printf("empty list\n");
+		return 1; //valid; empty list
+	}
+	if (list->first == NULL || list->last == NULL){
+		printf("undefined ends\n");
+		return 0; //invalid
+	}
+	LayerNode *node = list->first;
+	LayerNode *next = node -> next;
+	while (next != NULL){
+		if (node != next->previous){
+			printf("next/previous mismatch\n");
+			return 0; //invalid
+		}
+		node = next;
+		next = node->next;
+	}
+	if (list->last != node){
+		printf("last does not reflect actual last\n");
+		return 0; //invalid
+	}
+	return 1; //valid
 }
 // END LAYER_LIST
 //
@@ -296,15 +333,16 @@ void recolor_rect(Object *rect, Color *fill){
 }
 
 void object_dealloc(Object *object) {
-	// TODO: Implement this!
 
 	if (object->layer_node != NULL){
-		object->layer_node->contents = NULL;
+		LayerList *list = object->layer_node->layer_list_ref;
+		if(list != NULL){
+			layerNode_remove(list, object->layer_node);
+		}
 		object->layer_node = NULL;
-    	//layerNode_dealloc(object->layer_node);
     }
-    else if (object->type == OBJECT_GROUP) {
-        layerList_dealloc(object->contains);
+    if (object->type == OBJECT_GROUP) {
+        //layerList_dealloc(object->contains);
     }
     
     else if (object->path_data != NULL) {
@@ -358,9 +396,16 @@ int group_add_object (Object *group, Object *object) {
 }
 
 int group_remove_object (Object *group, Object *object) {
-	if (object->layer_node->layer_list_ref != group->contains) { //if object is in group:
+	if (group->type != OBJECT_GROUP){
+		printf("Not a valid group\n");
+		return 0; //Failed; group not a group
+	}
+	if (object->layer_node->layer_list_ref == group->contains) { //if object is in group:
 		layerNode_remove(group->contains, object->layer_node);
 		object->layer_node = NULL;
+		if (!check_layerlist(group->contains)){
+			printf("layerlist bad\n");
+		}
 		return 1; //Succeeded
 	}
 	return 0; // Failed; object is not part of group->contains
@@ -422,8 +467,8 @@ int demo() {
 	Object *group2 = make_group(0,0);
 
 	int i;
-	int n = 16;
-	Object *objects[10];
+	int n = 6;
+	Object *objects[n];
 	for (i = 0; i < 3; i++) {
 		objects[i] = make_rect(i*120, 0, 50, 50, color);
 		group_add_object(group, objects[i]);
@@ -432,7 +477,7 @@ int demo() {
 	}
 	//Object *demo_object = make_rect(100, 300, 100, 50, color);
 	//window_add_object(win, demo_object);
-	for (i = 3; i < 10; i++) {
+	for (i = 3; i < n; i++) {
 		objects[i] = make_rect((i-3)*120, 200, 50, 20, color);
 		group_add_object(group2, objects[i]);
 		//if (i<6)
@@ -447,6 +492,15 @@ int demo() {
 
 	window_add_object(win, group);
 
+	group_remove_object(group, group2);
+	window_remove_object(win, group);
+	object_dealloc(group2);
+	object_dealloc(group);
+	if (!check_layerlist(win->contents))
+		printf("window layerlist corrupt\n");
+
+
+
 	while (running) {
 		window_refresh(win);
 
@@ -454,11 +508,11 @@ int demo() {
 		running = !glfwGetKey(GLFW_KEY_ESC) && window_isopen(win);
 	}
 
-	object_dealloc(group2);
+	//object_dealloc(group2);
 
-	object_dealloc(group); //segfaults
+	//object_dealloc(group); //segfaults
 
-	for (i = 0; i < 10; i++) {
+	for (i = 0; i < n; i++) {
 		object_dealloc(objects[i]);
 	}
 	//object_dealloc(demo_object);
