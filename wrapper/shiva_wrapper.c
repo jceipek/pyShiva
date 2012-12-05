@@ -139,7 +139,6 @@ int window_isopen (Window *window) {
 
 void window_dealloc (Window *window) { // XXX: TODO: return deallocation success as a flag
 	if (main_window != NULL) {
-		
 
 		free(window->title);
         layerList_dealloc(window->contents); //TODO: Make sure implemented
@@ -149,7 +148,6 @@ void window_dealloc (Window *window) { // XXX: TODO: return deallocation success
         
         // Clean up the ShivaVG context
 		vgDestroyContextSH();
-
 		// Close window and terminate GLFW
 		glfwTerminate();
 	} else {
@@ -230,11 +228,12 @@ LayerNode *make_layerNode() {
 
 void layerNode_dealloc(LayerNode *node) {
 	// TODO: Test this!!!
-	if (node->contents->type == OBJECT_GROUP)
+
+	if (node->contents != NULL && node->contents->type == OBJECT_GROUP)
 	{
 		object_dealloc(node->contents);
 	}
-    free(node);
+	free(node);
 }
 // END LAYER_NODE
 //
@@ -301,15 +300,22 @@ void recolor_rect(Object *rect, Color *fill){
 
 void object_dealloc(Object *object) {
 	// TODO: Implement this!
-    if (object->type == OBJECT_GROUP) {
+
+	if (object->layer_node != NULL){
+		object->layer_node->contents = NULL;
+		object->layer_node = NULL;
+    	//layerNode_dealloc(object->layer_node);
+    }
+    else if (object->type == OBJECT_GROUP) {
         layerList_dealloc(object->contains);
     }
     
-    if (object->path_data != NULL) {
+    else if (object->path_data != NULL) {
     	vgDestroyPath(object->path_data);
         //VGPath free(object->path_data); //TODO: Look up syntax, implement
     }
     // NOTE: the color ref'd by color_ref needs to get deallocated manually elsewhere
+
     free(object);
 }
 
@@ -318,13 +324,15 @@ void object_draw (Object *object, float x, float y) {
 	if (object->type != OBJECT_GROUP) {
 		vgSetPaint(object->fill_ref->paint, VG_FILL_PATH);
 		vgDrawPath(object->path_data, VG_FILL_PATH); // TODO: Make this not just be a rect!
-	} else {
+	} 
+	else {
 		LayerNode *curr;
 		curr = object->contains->first;
 		while (curr != NULL) {
-			curr = curr->next;
+			//curr = curr->next;
 			vgLoadIdentity();
 			object_draw (curr->contents, x+curr->contents->x, y+curr->contents->y);
+			curr = curr->next;
 		}
 	}
 }
@@ -337,6 +345,7 @@ void object_draw (Object *object, float x, float y) {
 Object *make_group(float x, float y) {
 	Object *group = make_object(x, y);
 	group->contains = make_layerList();
+	group->layer_node = NULL;
 	group->type = OBJECT_GROUP;
 	return group;
 }
@@ -412,6 +421,7 @@ int demo() {
 
 	Color *color = make_color(1,1,1,1);
 	Object *group = make_group(0,0);
+	Object *group2 = make_group(0,0);
 
 	int i;
 	int n = 16;
@@ -426,6 +436,7 @@ int demo() {
 	//window_add_object(win, demo_object);
 	for (i = 3; i < 10; i++) {
 		objects[i] = make_rect((i-3)*120, 200, 50, 20, color);
+		group_add_object(group2, objects[i]);
 		//if (i<6)
 	//		window_add_object(win, objects[i]);
 	}
@@ -434,7 +445,10 @@ int demo() {
 	window_remove_object(win, demo_object);
 	window_add_object(win, demo_object);
 */
+	group_add_object(group, group2);
+
 	window_add_object(win, group);
+
 	while (running) {
 		window_refresh(win);
 
@@ -442,7 +456,9 @@ int demo() {
 		running = !glfwGetKey(GLFW_KEY_ESC) && window_isopen(win);
 	}
 
-	group_dealloc(group);
+	object_dealloc(group2);
+
+	object_dealloc(group); //segfaults
 
 	for (i = 0; i < 10; i++) {
 		object_dealloc(objects[i]);
@@ -454,6 +470,5 @@ int demo() {
 	// Close the window, clean up the ShivaVG context, and clean up GLFW
 	window_dealloc(win);
 	//does not deallocate objects
-	
 	return 0;
 }

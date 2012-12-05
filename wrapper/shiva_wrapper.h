@@ -71,12 +71,12 @@ typedef struct Object {
 	enum OBJECT_TYPE type;
 	union {
 		struct LayerList *contains; // Set to NULL unless it is a Group
-		VGPath *path_data; // Set to NULL if it is a Group
+		struct {
+			VGPath *path_data; // Set to NULL if it is a Group
+			struct Color *fill_ref; // Set to NULL if it is a Group
+		};
 	};
-	union {
-		struct LayerNode *layer_node; // Set to NULL unless it is part of a Group or Window
-		struct Color *fill_ref; // Set to NULL if it is a Group
-	};
+	struct LayerNode *layer_node; // Set to NULL unless it is part of a Group or Window
 } Object;
 
 Object *make_object(float x, float y);
