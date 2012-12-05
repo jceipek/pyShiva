@@ -213,8 +213,8 @@ void layerNode_remove (LayerList *list, LayerNode *node) {
 	}
 
 	//deallocate node without affecting contents
-	//node->contents = NULL;
-	//layerNode_dealloc(node);
+	node->contents = NULL;
+	layerNode_dealloc(node);
 	// TODO: figure out if we should dealloc here!
 }
 
@@ -229,11 +229,13 @@ LayerNode *make_layerNode() {
 }
 
 void layerNode_dealloc(LayerNode *node) {
+	//frees node, preserves groups and objects
 	// TODO: Test this!!!
-
-	if (node->contents != NULL && node->contents->type == OBJECT_GROUP)
+	
+	if (node->contents != NULL)
 	{
-		object_dealloc(node->contents);
+		//object_dealloc(node->contents);
+		node->contents->layer_node = NULL;
 	}
 	free(node);
 }
@@ -253,18 +255,13 @@ LayerList *make_layerList() {
 
 void layerList_dealloc(LayerList *list) {
 	// TODO: test this!!!
-	printf("layerlist_dealloc\n");
     LayerNode *node = list->first;
     LayerNode *next;
-    printf("before while\n");
     while(node != NULL) {
-    	printf("dealloc while\n");
-        //LayerNode *next = node->next; 
         next = node->next;
         layerNode_dealloc(node);
         node = next;
     }
-    printf("free\n");
 	free(list);
 }
 
@@ -342,7 +339,7 @@ void object_dealloc(Object *object) {
 		object->layer_node = NULL;
     }
     if (object->type == OBJECT_GROUP) {
-        //layerList_dealloc(object->contains);
+        layerList_dealloc(object->contains);
     }
     
     else if (object->path_data != NULL) {
@@ -363,7 +360,6 @@ void object_draw (Object *object, float x, float y) {
 		LayerNode *curr;
 		curr = object->contains->first;
 		while (curr != NULL) {
-			//curr = curr->next;
 			vgLoadIdentity();
 			object_draw (curr->contents, x+curr->contents->x, y+curr->contents->y);
 			curr = curr->next;
@@ -494,12 +490,16 @@ int demo() {
 
 	group_remove_object(group, group2);
 	window_remove_object(win, group);
+	
 	object_dealloc(group2);
+	printf("check group list\n");
+	if (!check_layerlist(group->contains))
+		printf("group layerlist corrupt\n");
 	object_dealloc(group);
+	printf("check win list\n");
 	if (!check_layerlist(win->contents))
 		printf("window layerlist corrupt\n");
-
-
+	
 
 	while (running) {
 		window_refresh(win);
@@ -508,10 +508,6 @@ int demo() {
 		running = !glfwGetKey(GLFW_KEY_ESC) && window_isopen(win);
 	}
 
-	//object_dealloc(group2);
-
-	//object_dealloc(group); //segfaults
-
 	for (i = 0; i < n; i++) {
 		object_dealloc(objects[i]);
 	}
@@ -519,9 +515,11 @@ int demo() {
 	//free(objects);
 
 	color_dealloc(color);
+	printf("deallocated color\n");
 	// Close the window, clean up the ShivaVG context, and clean up GLFW
 	window_dealloc(win);
 	//does not deallocate objects
+	printf("deallocated win\n");
 
 	module_dealloc();
 	
