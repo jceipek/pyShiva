@@ -264,6 +264,23 @@ void layerList_dealloc(LayerList *list) {
 	free(list);
 }
 
+Object *window_get_item(Window *window, int index) {
+	return layerList_get_item(window->contents, index);
+}
+
+Object *layerList_get_item(LayerList *list, int index) {
+	if (index > (list->length)-1) {
+		return NULL;
+	} else {
+		LayerNode *curr = list->first;
+		int i;
+		for (i = 0; i < index; i++) {
+			curr = curr->next;
+		}
+		return curr->contents;
+	}
+}
+
 int check_layerlist(LayerList *list) {
 	if (list->first == NULL && list->last == NULL){
 		printf("empty list\n");

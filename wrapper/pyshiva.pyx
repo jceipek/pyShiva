@@ -1,5 +1,11 @@
 cimport cpyshiva
 
+cdef map_c_to_python
+map_c_to_python = dict()
+
+def madness():
+    print map_c_to_python
+
 def test():
     cpyshiva.demo()
 
@@ -22,6 +28,7 @@ cdef class Color:
         self._b = b
         self._a = a
         self._c_color = cpyshiva.make_color(r, g, b, a)
+        map_c_to_python[<int>self._c_color] = self
 
     property r:
         def __get__(self):
@@ -70,6 +77,7 @@ cdef class Color:
         return "Color with r:%f g:%f b:%f a:%f" % (self._r, self._g, self._b, self._a)
 
     def __dealloc__(self):
+        del map_c_to_python[<int>self._c_color]
         cpyshiva.color_dealloc(self._c_color)
 
 cdef class Entity:
@@ -85,6 +93,7 @@ cdef class Entity:
         if not self._inited:
             self._inited = True
             self._c_object = cpyshiva.make_object(x, y)
+            map_c_to_python[<int>self._c_object] = self
 
     property x:
         def __get__(self):
@@ -99,7 +108,7 @@ cdef class Entity:
             self._c_object.y = value
 
     def __dealloc__(self):
-    # TODO: Add this back in after making it so that closing the window does not delete the objects in it.
+        del map_c_to_python[<int>self._c_object]
         cpyshiva.object_dealloc(self._c_object)
 
 cdef class Group(Entity):
@@ -110,6 +119,7 @@ cdef class Group(Entity):
         if not self._inited:
             self._inited = True
             self._c_object = cpyshiva.make_group(x, y)
+            map_c_to_python[<int>self._c_object] = self
 
     def add(self, Entity obj):
         cpyshiva.group_add_object(self._c_object, obj._c_object)
@@ -136,6 +146,7 @@ cdef class Rect(Entity):
             else:
                 self._color = Color(*color)
                 self._init_with_color_object(x, y, width, height, self._color)
+            map_c_to_python[<int>self._c_object] = self
     
     cdef _init_with_color_object(self, float x, float y, float width, float height, Color color):
         self._c_object = cpyshiva.make_rect(x, y, width, height, color._c_color)
@@ -181,6 +192,7 @@ cdef class Window:
     cdef cpyshiva.Window *_c_window
     def __cinit__(self, char *title="pyshiva", int width=640, int height=480):
         self._c_window = cpyshiva.make_window(title, width, height)
+        map_c_to_python[<int>self._c_window] = self
 
     property title:
         def __get__(self):
@@ -222,7 +234,15 @@ cdef class Window:
     def s_since_refresh(self):
         return cpyshiva.glfwGetTime() - self._c_window.s_last_refresh_time
 
+    def __getitem__(self, int index):
+        obj = cpyshiva.window_get_item(self._c_window, index)
+        if obj:
+            return map_c_to_python[<int>obj]
+        else:
+            return None
+
     def __dealloc__(self):
+        del map_c_to_python[<int>self._c_window]
         cpyshiva.window_dealloc(self._c_window)
 
 cdef class __global_context__:
