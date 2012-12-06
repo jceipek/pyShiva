@@ -59,7 +59,7 @@ void createPrimitives()
   primitives[4] = rectRound;
   
   ellipse = testCreatePath();
-  vguEllipse(ellipse, 0,0, 100, 60);
+  vguEllipse(ellipse, 0,0, 100, 100);
   primitives[5] = ellipse;
   
   arcOpen = testCreatePath();
@@ -70,9 +70,11 @@ void createPrimitives()
   vguArc(arcChord, 0,0, 100,60, 0, 270, VGU_ARC_CHORD);
   primitives[7] = arcChord;
   
+  
   arcPie = testCreatePath();
   vguArc(arcPie, 0,0, 100,60, 0, 270, VGU_ARC_PIE);
   primitives[8] = arcPie;
+  
 }
 
 int main(int argc, char **argv)

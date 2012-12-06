@@ -197,7 +197,6 @@ void layerNode_add_start_node (LayerList *list, LayerNode *node) {
 
 void layerNode_remove (LayerList *list, LayerNode *node) {
 	// Assumes that node is in list
-	printf("remove node from list\n");
 	if (list->first == node) {
 		list->first = node->next;
 	}
@@ -471,8 +470,19 @@ int demo() {
 
 		//window_add_object(win, objects[i]);
 	}
-	//Object *demo_object = make_rect(100, 300, 100, 50, color);
-	//window_add_object(win, demo_object);
+	Object *demo_object = make_rect(100, 300, 100, 50, color);
+	Object *demo_object2 = make_rect(100, 300, 100, 50, color);
+	Object *demo_object3 = make_rect(100, 300, 100, 50, color);
+
+	window_add_object(win, demo_object);
+	window_add_object(win, demo_object2);
+	window_add_object(win, demo_object3);
+
+	object_dealloc(demo_object);
+	object_dealloc(demo_object2);
+	object_dealloc(demo_object3);
+
+	
 	for (i = 3; i < n; i++) {
 		objects[i] = make_rect((i-3)*120, 200, 50, 20, color);
 		group_add_object(group2, objects[i]);
@@ -488,8 +498,8 @@ int demo() {
 
 	window_add_object(win, group);
 
-	group_remove_object(group, group2);
-	window_remove_object(win, group);
+	//group_remove_object(group, group2);
+
 	
 	object_dealloc(group2);
 	printf("check group list\n");
@@ -499,7 +509,9 @@ int demo() {
 	printf("check win list\n");
 	if (!check_layerlist(win->contents))
 		printf("window layerlist corrupt\n");
-	
+
+
+
 
 	while (running) {
 		window_refresh(win);
@@ -513,6 +525,7 @@ int demo() {
 	}
 	//object_dealloc(demo_object);
 	//free(objects);
+
 
 	color_dealloc(color);
 	printf("deallocated color\n");
