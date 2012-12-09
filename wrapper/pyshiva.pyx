@@ -1,5 +1,11 @@
 cimport cpyshiva
 
+cdef map_c_to_python
+map_c_to_python = dict()
+
+def madness():
+    print map_c_to_python
+
 def test():
     cpyshiva.demo()
 
@@ -22,6 +28,7 @@ cdef class Color:
         self._b = b
         self._a = a
         self._c_color = cpyshiva.make_color(r, g, b, a)
+        map_c_to_python[<int>self._c_color] = self
 
     property r:
         def __get__(self):
@@ -70,6 +77,7 @@ cdef class Color:
         return "Color with r:%f g:%f b:%f a:%f" % (self._r, self._g, self._b, self._a)
 
     def __dealloc__(self):
+        del map_c_to_python[<int>self._c_color]
         cpyshiva.color_dealloc(self._c_color)
 
 cdef class Entity:
@@ -85,6 +93,7 @@ cdef class Entity:
         if not self._inited:
             self._inited = True
             self._c_object = cpyshiva.make_object(x, y)
+            map_c_to_python[<int>self._c_object] = self
 
     property x:
         def __get__(self):
@@ -99,7 +108,7 @@ cdef class Entity:
             self._c_object.y = value
 
     def __dealloc__(self):
-    # TODO: Add this back in after making it so that closing the window does not delete the objects in it.
+        del map_c_to_python[<int>self._c_object]
         cpyshiva.object_dealloc(self._c_object)
 
 cdef class Group(Entity):
@@ -110,12 +119,29 @@ cdef class Group(Entity):
         if not self._inited:
             self._inited = True
             self._c_object = cpyshiva.make_group(x, y)
+            map_c_to_python[<int>self._c_object] = self
 
     def add(self, Entity obj):
         cpyshiva.group_add_object(self._c_object, obj._c_object)
 
     def remove(self, Entity obj):
         cpyshiva.group_remove_object(self._c_object, obj._c_object)
+
+    def __getitem__(self, int index):
+        obj = cpyshiva.group_get_item(self._c_object, index)
+        if obj:
+            return map_c_to_python[<int>obj]
+        else:
+            return None
+
+    def __iter__(self):
+        def gen_for_objects():
+            curr_node = cpyshiva.group_get_first_node(self._c_object)
+            while curr_node:
+                yield map_c_to_python[<int>curr_node.contents]
+                curr_node = curr_node.next
+        
+        return gen_for_objects()
 
 cdef class Rect(Entity):
     """A Rect that can be added to groups and the window
@@ -136,6 +162,7 @@ cdef class Rect(Entity):
             else:
                 self._color = Color(*color)
                 self._init_with_color_object(x, y, width, height, self._color)
+            map_c_to_python[<int>self._c_object] = self
     
     cdef _init_with_color_object(self, float x, float y, float width, float height, Color color):
         self._c_object = cpyshiva.make_rect(x, y, width, height, color._c_color)
@@ -176,6 +203,65 @@ cdef class Rect(Entity):
 
     # Dealloc inherited from Entity
 
+cdef class Ellipse(Entity):
+    # TODO: FIX.
+    """An Ellipse that can be added to groups and the window
+
+    """
+    cdef float _width
+    cdef float _height
+    cdef Color _color
+
+    def __init__(self, float x=0, float y=0, float width=20, float height=10, color=(1,1,1,1)):
+        if not self._inited:
+            self._inited = True
+            self._width = width
+            self._height = height
+            if isinstance(color, Color):
+                self._color = color
+                self._init_with_color_object(x, y, width, height, self._color)
+            else:
+                self._color = Color(*color)
+                self._init_with_color_object(x, y, width, height, self._color)
+            map_c_to_python[<int>self._c_object] = self
+    
+    cdef _init_with_color_object(self, float x, float y, float width, float height, Color color):
+        self._c_object = cpyshiva.make_ellipse(x, y, width, height, color._c_color)
+
+    property width:
+        def __get__(self):
+            return self._width
+        def __set__(self, value):
+            cpyshiva.resize_rect(value, self.height, self._c_object)
+
+    property height:
+        def __get__(self):
+            return self._height
+        def __set__(self, value):
+            cpyshiva.resize_rect(self.width, value, self._c_object)
+
+    property color:
+        def __get__(self):
+            return self._color
+        def __set__(self, value):
+            if isinstance(value, Color):
+                self._color = value
+                self._set_color_to_color_object(value)
+            else:
+                self._color = Color(*value)
+                self._set_color_to_color_object(self._color)
+
+    cdef _set_color_to_color_object(self, Color color):
+        cpyshiva.recolor_rect(self._c_object, color._c_color)
+
+    def __repr__(self):
+        return str((self.x, self.y, self.width, self.height))
+
+    def __str__(self):
+        return "Ellipse at (%f, %f) with size (%f,%f)" % (self.x, self.y, self.width, self.height)
+
+    # Dealloc inherited from Entity
+
 cdef class Window:
     """A Window that can be created with pyshiva
 
@@ -183,6 +269,7 @@ cdef class Window:
     cdef cpyshiva.Window *_c_window
     def __cinit__(self, char *title="pyshiva", int width=640, int height=480):
         self._c_window = cpyshiva.make_window(title, width, height)
+        map_c_to_python[<int>self._c_window] = self
 
     property title:
         def __get__(self):
@@ -224,7 +311,28 @@ cdef class Window:
     def s_since_refresh(self):
         return cpyshiva.glfwGetTime() - self._c_window.s_last_refresh_time
 
+    def __getitem__(self, int index):
+        obj = cpyshiva.window_get_item(self._c_window, index)
+        if obj:
+            return map_c_to_python[<int>obj]
+        else:
+            return None
+
+    def __iter__(self):
+        def gen_for_objects():
+            curr_node = cpyshiva.window_get_first_node(self._c_window)
+            while curr_node:
+                yield map_c_to_python[<int>curr_node.contents]
+                curr_node = curr_node.next
+        
+        return gen_for_objects()
+
     def __dealloc__(self):
+        del map_c_to_python[<int>self._c_window]
         cpyshiva.window_dealloc(self._c_window)
 
+cdef class __global_context__:
+    def __dealloc__(self):
+        cpyshiva.module_dealloc()
 
+ctx = __global_context__()

@@ -33,6 +33,7 @@ cdef extern from "shiva_wrapper.h":
 
     Object *make_object(float x, float y)
     Object *make_rect(float x, float y, float width, float height, Color *color)
+    Object *make_ellipse(float x, float y, float width, float height, Color *color)
     void recolor_rect(Object *rect, Color *fill)
     void resize_rect(float width, float height, Object *rect)
     void *object_dealloc(Object *object)
@@ -45,5 +46,18 @@ cdef extern from "shiva_wrapper.h":
     int group_add_object (Object *group, Object *object)
     int group_remove_object (Object *group, Object *object)
     void *group_dealloc(Object *group)
+
+    ctypedef struct LayerNode:
+        LayerNode *previous
+        Object *contents
+        LayerNode *next
+        #struct LayerList *layer_list_ref
+    #LayerNode *layerList_get_first_node(LayerList *list)
+    Object *window_get_item(Window *window, int index)
+    LayerNode *window_get_first_node(Window *window)
+    Object *group_get_item(Object *group, int index)
+    LayerNode *group_get_first_node(Object *group)
+
+    void module_dealloc()
 
     int demo()

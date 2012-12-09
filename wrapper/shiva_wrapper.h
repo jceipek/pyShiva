@@ -49,6 +49,7 @@ void layerNode_dealloc(LayerNode *node);
 
 LayerList *make_layerList();
 void layerList_dealloc(LayerList *list);
+int check_layerlist(LayerList *list);
 
 // Color
 typedef struct Color {
@@ -64,13 +65,19 @@ Color *color_change (Color *color, float val, int color_elem);
 
 
 // Object
+
+enum OBJECT_TYPE {OBJECT_GROUP, OBJECT_RECT, OBJECT_ELLIPSE, OBJECT_GENERIC};
 typedef struct Object {
 	float x, y;
-	struct LayerList *contains; // Set to NULL unless it is a Group
+	enum OBJECT_TYPE type;
+	union {
+		struct LayerList *contains; // Set to NULL unless it is a Group
+		struct {
+			VGPath *path_data; // Set to NULL if it is a Group
+			struct Color *fill_ref; // Set to NULL if it is a Group
+		};
+	};
 	struct LayerNode *layer_node; // Set to NULL unless it is part of a Group or Window
-	// TODO: Use a union?
-	VGPath *path_data; // Set to NULL if it is a Group
-	struct Color *fill_ref; // Set to NULL if it is a Group
 } Object;
 
 Object *make_object(float x, float y);
@@ -80,6 +87,7 @@ int group_remove_object (Object *group, Object *object);
 void *group_dealloc(Object *group);
 Object *make_rect(float x, float y, float width, float height, Color *fill);
 void resize_rect(float width, float height, Object *rect);
+Object *make_ellipse(float x, float y, float width, float height, Color *fill);
 void object_dealloc(Object *object);
 void object_draw (Object *object, float x, float y);
 
@@ -111,6 +119,16 @@ int window_remove_object (Window *window, Object *object);
 
 void window_set_bg(Window *window, float r, float g, float b);
 
+
+Object *window_get_item(Window *window, int index);
+Object *layerList_get_item(LayerList *list, int index);
+LayerNode *layerList_get_first_node(LayerList *list);
+LayerNode *window_get_first_node(Window *window);
+Object *group_get_item(Object *group, int index);
+LayerNode *group_get_first_node(Object *group);
+
 void get_mouse_pos(int *x, int *y);
+
+void module_dealloc();
 
 int demo();
