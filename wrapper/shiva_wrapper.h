@@ -66,7 +66,7 @@ Color *color_change (Color *color, float val, int color_elem);
 
 // Object
 
-enum OBJECT_TYPE {OBJECT_GROUP, OBJECT_RECT, OBJECT_GENERIC};
+enum OBJECT_TYPE {OBJECT_GROUP, OBJECT_RECT, OBJECT_ELLIPSE, OBJECT_GENERIC};
 typedef struct Object {
 	float x, y;
 	enum OBJECT_TYPE type;
@@ -85,6 +85,7 @@ Object *make_group(float x, float y);
 int group_add_object (Object *group, Object *object);
 int group_remove_object (Object *group, Object *object);
 Object *make_rect(float x, float y, float width, float height, Color *fill);
+Object *make_ellipse(float x, float y, float width, float height, Color *fill);
 void object_dealloc(Object *object);
 void object_draw (Object *object, float x, float y);
 
