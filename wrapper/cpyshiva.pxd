@@ -33,6 +33,7 @@ cdef extern from "shiva_wrapper.h":
 
     Object *make_object(float x, float y)
     Object *make_rect(float x, float y, float width, float height, Color *color)
+    Object *make_ellipse(float x, float y, float width, float height, Color *color)
     void recolor_rect(Object *rect, Color *fill)
     void resize_rect(float width, float height, Object *rect)
     void *object_dealloc(Object *object)

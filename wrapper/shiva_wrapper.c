@@ -43,7 +43,7 @@ Window *make_window (char *title, int width, int height) {
 	window->bg_color[2] = 0;
 	window->bg_color[3] = 1;
 
-	int n = glfwOpenWindow(width, height, 0,0,0,0,0,0, GLFW_WINDOW);
+	int n = glfwOpenWindow(width, height, 0,0,0,0,0,8, GLFW_WINDOW);
 	if (!n) {
 		glfwTerminate(); // Cleanup GLFW
 		return NULL; // Couldn't create a window
@@ -357,6 +357,19 @@ Object *make_rect(float x, float y, float width, float height, Color *fill) {
 	return object;
 }
 
+Object *make_ellipse(float x, float y, float width, float height, Color *fill) {
+	Object *object = make_object(x, y);
+	VGPath path = vgCreatePath(VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F,
+								1,0,0,0, VG_PATH_CAPABILITY_ALL);
+	vguEllipse(path, 0, 0, width, height);
+
+	object->path_data = path;
+	object->fill_ref = fill;
+	object->type = OBJECT_ELLIPSE;
+
+	return object;
+}
+
 void resize_rect(float width, float height, Object *rect){
 	vguRect(rect->path_data, 0, 0, width, height);
 }
@@ -508,7 +521,7 @@ int demo() {
 
 		//window_add_object(win, objects[i]);
 	}
-	Object *demo_object = make_rect(100, 300, 100, 50, color);
+	Object *demo_object = make_ellipse(100, 300, 100, 50, color);
 	Object *demo_object2 = make_rect(100, 300, 100, 50, color);
 	Object *demo_object3 = make_rect(100, 300, 100, 50, color);
 
@@ -516,9 +529,9 @@ int demo() {
 	window_add_object(win, demo_object2);
 	window_add_object(win, demo_object3);
 
-	object_dealloc(demo_object);
+	/*object_dealloc(demo_object);
 	object_dealloc(demo_object2);
-	object_dealloc(demo_object3);
+	object_dealloc(demo_object3);*/
 
 	
 	for (i = 3; i < n; i++) {
@@ -538,7 +551,7 @@ int demo() {
 
 	//group_remove_object(group, group2);
 
-	
+	/*
 	object_dealloc(group2);
 	printf("check group list\n");
 	if (!check_layerlist(group->contains))
@@ -548,7 +561,7 @@ int demo() {
 	if (!check_layerlist(win->contents))
 		printf("window layerlist corrupt\n");
 
-
+	*/
 
 
 	while (running) {

@@ -14,7 +14,7 @@ for i in range(2000):
     r = random.random()
     a = abs(math.cos(i))*0.5
     side_length = abs(math.sin(i))*50
-    r = ps.Rect(0,0,side_length,side_length,(r,abs(math.sin(i)),1,0.1))
+    r = ps.Ellipse(0,0,side_length,side_length,(r,abs(math.sin(i)),1,0.1))
     w.add(r) # Add the rectangles to the window.
 
 k = 0.25

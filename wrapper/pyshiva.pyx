@@ -201,6 +201,65 @@ cdef class Rect(Entity):
 
     # Dealloc inherited from Entity
 
+cdef class Ellipse(Entity):
+    # TODO: FIX.
+    """An Ellipse that can be added to groups and the window
+
+    """
+    cdef float _width
+    cdef float _height
+    cdef Color _color
+
+    def __init__(self, float x=0, float y=0, float width=20, float height=10, color=(1,1,1,1)):
+        if not self._inited:
+            self._inited = True
+            self._width = width
+            self._height = height
+            if isinstance(color, Color):
+                self._color = color
+                self._init_with_color_object(x, y, width, height, self._color)
+            else:
+                self._color = Color(*color)
+                self._init_with_color_object(x, y, width, height, self._color)
+            map_c_to_python[<int>self._c_object] = self
+    
+    cdef _init_with_color_object(self, float x, float y, float width, float height, Color color):
+        self._c_object = cpyshiva.make_ellipse(x, y, width, height, color._c_color)
+
+    property width:
+        def __get__(self):
+            return self._width
+        def __set__(self, value):
+            cpyshiva.resize_rect(value, self.height, self._c_object)
+
+    property height:
+        def __get__(self):
+            return self._height
+        def __set__(self, value):
+            cpyshiva.resize_rect(self.width, value, self._c_object)
+
+    property color:
+        def __get__(self):
+            return self._color
+        def __set__(self, value):
+            if isinstance(value, Color):
+                self._color = value
+                self._set_color_to_color_object(value)
+            else:
+                self._color = Color(*value)
+                self._set_color_to_color_object(self._color)
+
+    cdef _set_color_to_color_object(self, Color color):
+        cpyshiva.recolor_rect(self._c_object, color._c_color)
+
+    def __repr__(self):
+        return str((self.x, self.y, self.width, self.height))
+
+    def __str__(self):
+        return "Ellipse at (%f, %f) with size (%f,%f)" % (self.x, self.y, self.width, self.height)
+
+    # Dealloc inherited from Entity
+
 cdef class Window:
     """A Window that can be created with pyshiva
 
