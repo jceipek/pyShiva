@@ -241,6 +241,17 @@ cdef class Window:
         else:
             return None
 
+    def __iter__(self):
+        def gen_for_objects():
+            startIndex = 0
+            curr = self.__getitem__(startIndex)
+            while curr:
+                yield curr
+                curr = self.__getitem__(startIndex)
+                startIndex += 1
+        
+        return gen_for_objects()
+
     def __dealloc__(self):
         del map_c_to_python[<int>self._c_window]
         cpyshiva.window_dealloc(self._c_window)
