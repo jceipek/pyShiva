@@ -144,12 +144,14 @@ cdef class Rect(Entity):
         def __get__(self):
             return self._width
         def __set__(self, float value):
+            self._width = value
             cpyshiva.resize_rect(value, self.height, self._c_object)
 
     property height:
         def __get__(self):
             return self._height
         def __set__(self, float value):
+            self._height = value
             cpyshiva.resize_rect(self.width, value, self._c_object)
 
     property color:
