@@ -272,6 +272,14 @@ LayerNode *window_get_first_node(Window *window) {
 	return layerList_get_first_node(window->contents);
 }
 
+Object *group_get_item(Object *group, int index) {
+	return layerList_get_item(group->contains, index);
+}
+
+LayerNode *group_get_first_node(Object *group) {
+	return layerList_get_first_node(group->contains);
+}
+
 Object *layerList_get_item(LayerList *list, int index) {
 	if (index > (list->length)-1) {
 		return NULL;

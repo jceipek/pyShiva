@@ -127,6 +127,22 @@ cdef class Group(Entity):
     def remove(self, Entity obj):
         cpyshiva.group_remove_object(self._c_object, obj._c_object)
 
+    def __getitem__(self, int index):
+        obj = cpyshiva.group_get_item(self._c_object, index)
+        if obj:
+            return map_c_to_python[<int>obj]
+        else:
+            return None
+
+    def __iter__(self):
+        def gen_for_objects():
+            curr_node = cpyshiva.group_get_first_node(self._c_object)
+            while curr_node:
+                yield map_c_to_python[<int>curr_node.contents]
+                curr_node = curr_node.next
+        
+        return gen_for_objects()
+
 cdef class Rect(Entity):
     """A Rect that can be added to groups and the window
 

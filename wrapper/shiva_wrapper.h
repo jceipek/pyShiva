@@ -121,6 +121,8 @@ Object *window_get_item(Window *window, int index);
 Object *layerList_get_item(LayerList *list, int index);
 LayerNode *layerList_get_first_node(LayerList *list);
 LayerNode *window_get_first_node(Window *window);
+Object *group_get_item(Object *group, int index);
+LayerNode *group_get_first_node(Object *group);
 
 void get_mouse_pos(int *x, int *y);
 
