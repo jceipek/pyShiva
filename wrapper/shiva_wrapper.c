@@ -371,6 +371,7 @@ Object *make_ellipse(float x, float y, float width, float height, Color *fill) {
 }
 
 void resize_rect(float width, float height, Object *rect){
+	vgClearPath(rect->path_data, VG_PATH_CAPABILITY_ALL);
 	vguRect(rect->path_data, 0, 0, width, height);
 }
 
