@@ -48,6 +48,14 @@ cdef extern from "shiva_wrapper.h":
 
     Object *window_get_item(Window *window, int index)
 
+    ctypedef struct LayerNode:
+        LayerNode *previous
+        Object *contents
+        LayerNode *next
+        #struct LayerList *layer_list_ref
+    #LayerNode *layerList_get_first_node(LayerList *list)
+    LayerNode *window_get_first_node(Window *window)
+
     void module_dealloc()
 
     int demo()

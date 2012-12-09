@@ -243,12 +243,10 @@ cdef class Window:
 
     def __iter__(self):
         def gen_for_objects():
-            startIndex = 0
-            curr = self.__getitem__(startIndex)
-            while curr:
-                yield curr
-                curr = self.__getitem__(startIndex)
-                startIndex += 1
+            curr_node = cpyshiva.window_get_first_node(self._c_window)
+            while curr_node:
+                yield map_c_to_python[<int>curr_node.contents]
+                curr_node = curr_node.next
         
         return gen_for_objects()
 

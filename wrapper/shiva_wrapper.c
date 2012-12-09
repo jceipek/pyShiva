@@ -268,6 +268,10 @@ Object *window_get_item(Window *window, int index) {
 	return layerList_get_item(window->contents, index);
 }
 
+LayerNode *window_get_first_node(Window *window) {
+	return layerList_get_first_node(window->contents);
+}
+
 Object *layerList_get_item(LayerList *list, int index) {
 	if (index > (list->length)-1) {
 		return NULL;
@@ -278,6 +282,15 @@ Object *layerList_get_item(LayerList *list, int index) {
 			curr = curr->next;
 		}
 		return curr->contents;
+	}
+}
+
+LayerNode *layerList_get_first_node(LayerList *list) {
+	if (list->length < 1) {
+		return NULL;
+	} else {
+		LayerNode *curr = list->first;
+		return curr;
 	}
 }
 

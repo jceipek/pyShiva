@@ -119,6 +119,8 @@ void window_set_bg(Window *window, float r, float g, float b);
 
 Object *window_get_item(Window *window, int index);
 Object *layerList_get_item(LayerList *list, int index);
+LayerNode *layerList_get_first_node(LayerList *list);
+LayerNode *window_get_first_node(Window *window);
 
 void get_mouse_pos(int *x, int *y);
 
