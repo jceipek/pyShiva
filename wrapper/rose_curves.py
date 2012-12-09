@@ -36,7 +36,7 @@ while w.is_open():
         r.x = radius*math.cos(k*(t+i))*math.sin(t+i)*w.width/2+w.width/2
         r.y = radius*math.sin(k*(t+i))*math.sin(t+i)*w.height/2+w.height/2
         #print abs(10*math.sin(t))
-        r.width = 1.32303762436 #100000 #abs(100*math.sin(t))
+        #r.width = 1.32303762436 #100000 #abs(100*math.sin(t))
         #r.height = 100000 #abs(100*math.sin(t))
         
     # Update the screen
