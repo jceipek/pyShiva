@@ -22,7 +22,6 @@ cdef class Color:
     cdef float _b
     cdef float _a
     def __cinit__(self, float r, float g, float b, float a=1.0):
-        # TODO: Make colors mutable!
         self._r = r
         self._g = g
         self._b = b
@@ -65,7 +64,9 @@ cdef class Color:
 
         def __set__(self, iter_value):
             for i,v in enumerate(iter_value):
-                self._c_color = cpyshiva.color_change(self._c_color, v, i)
+                if i > 3:
+                    raise IndexError("colors have 4 channels: r,g,b,a")
+                self._c_color = cpyshiva.color_change(self._c_color, <float>v, i)
 
     def __getitem__(self, int index):
         if index == 0:
@@ -168,7 +169,7 @@ cdef class Shape(Entity):
                 # self._color = Color(*color) # makes a new color object with properties from the iterable
             map_c_to_python[<int>self._c_object] = self
 
-    def __init_with_color_object__(self, float x, float y, Color color):
+    cdef __init_with_color_object__(self, float x, float y, Color color):
         self._c_object = cpyshiva.make_shape(x, y, color._c_color)
         map_c_to_python[<int>self._c_object] = self
 
