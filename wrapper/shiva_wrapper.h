@@ -85,9 +85,10 @@ Object *make_group(float x, float y);
 int group_add_object (Object *group, Object *object);
 int group_remove_object (Object *group, Object *object);
 void *group_dealloc(Object *group);
-Object *make_rect(float x, float y, float width, float height, Color *fill);
+Object *make_shape(float x, float y, Color *fill);
+Object *make_rect_from_shape(Object *shape, float width, float height);
+Object *make_ellipse_from_shape(Object *shape, float width, float height);
 void resize_rect(float width, float height, Object *rect);
-Object *make_ellipse(float x, float y, float width, float height, Color *fill);
 void object_dealloc(Object *object);
 void object_draw (Object *object, float x, float y);
 

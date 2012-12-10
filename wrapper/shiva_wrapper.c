@@ -344,37 +344,31 @@ Object *make_object(float x, float y) {
 	return object;
 }
 
-Object *make_rect(float x, float y, float width, float height, Color *fill) {
+Object *make_shape(float x, float y, Color *fill){
 	Object *object = make_object(x, y);
 	VGPath path = vgCreatePath(VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F,
 								1,0,0,0, VG_PATH_CAPABILITY_ALL);
-	vguRect(path, 0, 0, width, height);
-
 	object->path_data = path;
 	object->fill_ref = fill;
-	object->type = OBJECT_RECT;
-
 	return object;
 }
 
-Object *make_ellipse(float x, float y, float width, float height, Color *fill) {
-	Object *object = make_object(x, y);
-	VGPath path = vgCreatePath(VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F,
-								1,0,0,0, VG_PATH_CAPABILITY_ALL);
-	vguEllipse(path, 0, 0, width, height);
+Object *make_rect_from_shape(Object *shape, float width, float height) {
+	vguRect(shape->path_data, 0, 0, width, height);
+	shape->type = OBJECT_RECT;
+	return shape;
+}
 
-	object->path_data = path;
-	object->fill_ref = fill;
-	object->type = OBJECT_ELLIPSE;
-
-	return object;
+Object *make_ellipse_from_shape(Object *shape, float width, float height) {
+	vguEllipse(shape->path_data, 0, 0, width, height);
+	shape->type = OBJECT_ELLIPSE;
+	return shape;
 }
 
 void resize_rect(float width, float height, Object *rect){
 	vgClearPath(rect->path_data, VG_PATH_CAPABILITY_ALL);
 	vguRect(rect->path_data, 0, 0, width, height);
 }
-
 
 void recolor_rect(Object *rect, Color *fill){
 	rect->fill_ref = fill;
@@ -516,15 +510,22 @@ int demo() {
 	int i;
 	int n = 6;
 	Object *objects[n];
+	Object *temp_shape;
+
 	for (i = 0; i < 3; i++) {
-		objects[i] = make_rect(i*120, 0, 50, 50, color);
+		temp_shape = make_shape(i*120, 0, color);
+		objects[i] = make_rect_from_shape(temp_shape, 50, 50);
 		group_add_object(group, objects[i]);
 
 		//window_add_object(win, objects[i]);
 	}
-	Object *demo_object = make_ellipse(100, 300, 100, 50, color);
-	Object *demo_object2 = make_rect(100, 300, 100, 50, color);
-	Object *demo_object3 = make_rect(100, 300, 100, 50, color);
+	temp_shape = make_shape(100, 100, color);
+	Object *demo_object = make_rect_from_shape(temp_shape, 100, 50);
+	temp_shape = make_shape(100, 100, color);
+	Object *demo_object2 = make_rect_from_shape(temp_shape, 100, 50);
+	temp_shape = make_shape(100, 300, color);
+	Object *demo_object3 = make_rect_from_shape(temp_shape, 100, 50);
+
 
 	window_add_object(win, demo_object);
 	window_add_object(win, demo_object2);
@@ -534,13 +535,14 @@ int demo() {
 	object_dealloc(demo_object2);
 	object_dealloc(demo_object3);*/
 
-	
+	/*
 	for (i = 3; i < n; i++) {
 		objects[i] = make_rect((i-3)*120, 200, 50, 20, color);
 		group_add_object(group2, objects[i]);
 		//if (i<6)
 	//		window_add_object(win, objects[i]);
 	}
+	*/
 	/*
 
 	window_remove_object(win, demo_object);

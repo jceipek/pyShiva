@@ -27,13 +27,20 @@ cdef extern from "shiva_wrapper.h":
     ctypedef struct Object:
         float x
         float y
-        #LayerList *contains
-        #LayerNode *layer_node
-        #VGPath *path_data
+        #enum OBJECT_TYPE type
+        #cdef union WAT:
+        #    LayerList *contains # Set to NULL unless it is a Group
+        #    cdef struct:
+        #VGPath *path_data # Set to NULL if it is a Group
+        Color *fill_ref # Set to NULL if it is a Group    
+        #LayerNode *layer_node # Set to NULL unless it is part of a Group or Window
 
     Object *make_object(float x, float y)
-    Object *make_rect(float x, float y, float width, float height, Color *color)
-    Object *make_ellipse(float x, float y, float width, float height, Color *color)
+    Object *make_shape(float x, float y, Color *fill)
+    Object *make_rect_from_shape(Object *shape, float width, float height)
+    Object *make_ellipse_from_shape(Object *shape, float width, float height)
+
+
     void recolor_rect(Object *rect, Color *fill)
     void resize_rect(float width, float height, Object *rect)
     void *object_dealloc(Object *object)
