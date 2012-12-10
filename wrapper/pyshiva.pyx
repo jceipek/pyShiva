@@ -164,7 +164,7 @@ cdef class Shape(Entity):
 
     cdef __init_with_color_object__(self, float x, float y, Color color):
         self._c_object = cpyshiva.make_shape(x, y, color._c_color)
-        self._map_c_to_python[<int>color._c_color] = self
+        self._map_c_to_python[<int>color._c_color] = color
 
     property color:
         def __get__(self):
@@ -179,6 +179,7 @@ cdef class Shape(Entity):
         self._map_c_to_python.clear()
         self._map_c_to_python[<int>self._c_object.fill_ref] = color
         cpyshiva.shape_recolor(self._c_object, color._c_color)
+        return self._map_c_to_python
     
     def __repr__(self):
         return str((self.x, self.y, self.color))
