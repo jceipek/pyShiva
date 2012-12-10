@@ -59,6 +59,14 @@ cdef class Color:
             self._a = value
             self._c_color = cpyshiva.color_change(self._c_color, value, 3)
 
+    property values:
+        def __get__(self):
+            return (self._r, self._g, self._b, self._a)
+
+        def __set__(self, iter_value):
+            for i,v in enumerate(iter_value):
+                self._c_color = cpyshiva.color_change(self._c_color, v, i)
+
     def __getitem__(self, int index):
         if index == 0:
             return self._r

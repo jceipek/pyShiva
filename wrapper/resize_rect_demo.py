@@ -27,5 +27,6 @@ while w.is_open():
 		#change dimensions of rects based on proximity to cursor
 		r.width = rs/(2**(((abs(x-r.x-rs/2)**2+abs(y-r.y-rs/2)**2)**0.5)/(rs**1.35)))
 		r.height = r.width
+		r.color.r = math.sin(r.width)
 			
 	w.refresh()
