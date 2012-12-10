@@ -94,6 +94,7 @@ cdef class Entity:
             self._inited = True
             self._c_object = cpyshiva.make_object(x, y)
             map_c_to_python[<int>self._c_object] = self
+            print 'entity_init'
 
     property x:
         def __get__(self):
@@ -143,123 +144,117 @@ cdef class Group(Entity):
         
         return gen_for_objects()
 
-cdef class Rect(Entity):
-    """A Rect that can be added to groups and the window
+cdef class Shape(Entity):
+    def __init__(self, float x=0, float y=0, color=(1,1,1,1)):
+        if not self._inited:
+            self._inited = True
 
+            if isinstance(color, Color):
+                self.__init_with_color_object__(x, y, color)
+                # self._color = color # uses existing color object
+            else:
+                self.__init_with_color_object__(x, y, Color(*color))
+                # self._color = Color(*color) # makes a new color object with properties from the iterable
+            map_c_to_python[<int>self._c_object] = self
+
+    def __init_with_color_object__(self, float x, float y, Color color):
+        self._c_object = cpyshiva.make_shape(x, y, color._c_color)
+        map_c_to_python[<int>self._c_object] = self
+
+
+    property color:
+        def __get__(self):
+            return map_c_to_python[<int>self._c_object.fill_ref]
+        def __set__(self, value):
+            if isinstance(value, Color):
+                self._set_color_to_color_object(value)
+            else:
+                self._set_color_to_color_object(Color(*value))
+
+    cdef _set_color_to_color_object(self, Color color):
+        cpyshiva.recolor_rect(self._c_object, color._c_color)
+    
+    def __repr__(self):
+        return str(self.x, self.y, self.color)
+
+    def __str__(self):
+        return "Shape at (%f, %f) with color %s" % (self.x, self.y, self.color)
+     
+    # Dealloc inherited from Entity
+
+
+
+cdef class Rect(Shape):
+    """A Rect that can be added to groups and the window
     """
     cdef float _width
     cdef float _height
-    cdef Color _color
 
     def __init__(self, float x=0, float y=0, float width=20, float height=10, color=(1,1,1,1)):
         if not self._inited:
-            self._inited = True
+            Shape.__init__(self, x, y, color)
             self._width = width
             self._height = height
-            if isinstance(color, Color):
-                self._color = color
-                self._init_with_color_object(x, y, width, height, self._color)
-            else:
-                self._color = Color(*color)
-                self._init_with_color_object(x, y, width, height, self._color)
-            map_c_to_python[<int>self._c_object] = self
-    
-    cdef _init_with_color_object(self, float x, float y, float width, float height, Color color):
-        self._c_object = cpyshiva.make_rect(x, y, width, height, color._c_color)
-
+            cpyshiva.make_rect_from_shape(self._c_object, width, height)
+            map_c_to_python[<int>self._c_object] = self # TODO: figure out if this is necessary
     property width:
         def __get__(self):
             return self._width
         def __set__(self, float value):
-            self._width = value
-            cpyshiva.resize_rect(value, self.height, self._c_object)
+            print 'not supported'
+            #self._width = value
+            #cpyshiva.resize_rect(value, self.height, self._c_object)
 
     property height:
         def __get__(self):
             return self._height
         def __set__(self, float value):
-            self._height = value
-            cpyshiva.resize_rect(self.width, value, self._c_object)
-
-    property color:
-        def __get__(self):
-            return self._color
-        def __set__(self, value):
-            if isinstance(value, Color):
-                self._color = value
-                self._set_color_to_color_object(value)
-            else:
-                self._color = Color(*value)
-                self._set_color_to_color_object(self._color)
-
-    cdef _set_color_to_color_object(self, Color color):
-        cpyshiva.recolor_rect(self._c_object, color._c_color)
-
+            print 'not supported'
+            #self._height = value
+            #cpyshiva.resize_rect(self.width, value, self._c_object)
+    
     def __repr__(self):
-        return str((self.x, self.y, self.width, self.height))
+        return str(self.x, self.y, self.width, self.height, self.color)
 
     def __str__(self):
-        return "Rect at (%f, %f) with size (%f,%f)" % (self.x, self.y, self.width, self.height)
+        return "Rect at (%f, %f) with size (%f,%f) and color %s" % (self.x, self.y, self.width, self.height, self.color)
 
     # Dealloc inherited from Entity
 
-cdef class Ellipse(Entity):
-    # TODO: FIX.
-    """An Ellipse that can be added to groups and the window
-
+cdef class Ellipse(Shape):
+    """A Ellipse that can be added to groups and the window
     """
     cdef float _width
     cdef float _height
-    cdef Color _color
 
     def __init__(self, float x=0, float y=0, float width=20, float height=10, color=(1,1,1,1)):
         if not self._inited:
-            self._inited = True
+            Shape.__init__(self, x, y, color)
             self._width = width
             self._height = height
-            if isinstance(color, Color):
-                self._color = color
-                self._init_with_color_object(x, y, width, height, self._color)
-            else:
-                self._color = Color(*color)
-                self._init_with_color_object(x, y, width, height, self._color)
-            map_c_to_python[<int>self._c_object] = self
-    
-    cdef _init_with_color_object(self, float x, float y, float width, float height, Color color):
-        self._c_object = cpyshiva.make_ellipse(x, y, width, height, color._c_color)
-
+            cpyshiva.make_ellipse_from_shape(self._c_object, width, height)
+            map_c_to_python[<int>self._c_object] = self # TODO: figure out if this is necessary
     property width:
         def __get__(self):
             return self._width
-        def __set__(self, value):
-            cpyshiva.resize_rect(value, self.height, self._c_object)
+        def __set__(self, float value):
+            print 'not supported'
+            #self._width = value
+            #cpyshiva.resize_rect(value, self.height, self._c_object)
 
     property height:
         def __get__(self):
             return self._height
-        def __set__(self, value):
-            cpyshiva.resize_rect(self.width, value, self._c_object)
-
-    property color:
-        def __get__(self):
-            return self._color
-        def __set__(self, value):
-            if isinstance(value, Color):
-                self._color = value
-                self._set_color_to_color_object(value)
-            else:
-                self._color = Color(*value)
-                self._set_color_to_color_object(self._color)
-
-    cdef _set_color_to_color_object(self, Color color):
-        cpyshiva.recolor_rect(self._c_object, color._c_color)
+        def __set__(self, float value):
+            print 'not supported'
+            #self._height = value
+            #cpyshiva.resize_rect(self.width, value, self._c_object)
 
     def __repr__(self):
-        return str((self.x, self.y, self.width, self.height))
-
+        return str(self.x, self.y, self.width, self.height, self.color)
+        
     def __str__(self):
-        return "Ellipse at (%f, %f) with size (%f,%f)" % (self.x, self.y, self.width, self.height)
-
+        return "Ellipse at (%f, %f) with size (%f,%f) and color %s" % (self.x, self.y, self.width, self.height, self.color)
     # Dealloc inherited from Entity
 
 cdef class Window:
