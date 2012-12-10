@@ -128,6 +128,9 @@ cdef class Group(Entity):
     def remove(self, Entity obj):
         cpyshiva.group_remove_object(self._c_object, obj._c_object)
 
+    def __len__(self):
+        return self._c_object.contains.length
+
     def __getitem__(self, int index):
         obj = cpyshiva.group_get_item(self._c_object, index)
         if obj:
@@ -327,6 +330,9 @@ cdef class Window:
 
     def s_since_refresh(self):
         return cpyshiva.glfwGetTime() - self._c_window.s_last_refresh_time
+
+    def __len__(self):
+        return self._c_window.contents.length
 
     def __getitem__(self, int index):
         obj = cpyshiva.window_get_item(self._c_window, index)

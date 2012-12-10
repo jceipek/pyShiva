@@ -9,6 +9,7 @@ cdef extern from "shiva_wrapper.h":
         int height
         char *title
         double s_last_refresh_time
+        LayerList *contents
 
     Window *make_window (char *title, int width, int height)
     void window_refresh (Window *window)
@@ -29,7 +30,7 @@ cdef extern from "shiva_wrapper.h":
         float y
         #enum OBJECT_TYPE type
         #cdef union WAT:
-        #    LayerList *contains # Set to NULL unless it is a Group
+        LayerList *contains # Set to NULL unless it is a Group
         #    cdef struct:
         #VGPath *path_data # Set to NULL if it is a Group
         Color *fill_ref # Set to NULL if it is a Group    
@@ -61,6 +62,12 @@ cdef extern from "shiva_wrapper.h":
         LayerNode *next
         #struct LayerList *layer_list_ref
     #LayerNode *layerList_get_first_node(LayerList *list)
+
+    ctypedef struct LayerList:
+        int length
+        LayerNode *first
+        LayerNode *last
+
     Object *window_get_item(Window *window, int index)
     LayerNode *window_get_first_node(Window *window)
     Object *group_get_item(Object *group, int index)
