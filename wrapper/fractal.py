@@ -8,7 +8,8 @@ from math import sin, cos
 w = ps.Window(title = "Fractals!")
 
 def create_circles(iterations, x, y, radius):
-	w.add(ps.Circle(x,y,radius,(abs(sin(radius)),0,abs(cos(radius)),0.2)))
+	w.add(ps.Circle(x, y, radius,
+					color = (abs(sin(radius)),0,abs(cos(radius)),0.2)))
 	if iterations > 0:
 		iterations -= 1
 		factor = 2.4
