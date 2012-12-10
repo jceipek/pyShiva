@@ -41,8 +41,9 @@ cdef extern from "shiva_wrapper.h":
     Object *make_ellipse_from_shape(Object *shape, float width, float height)
 
 
-    void recolor_rect(Object *rect, Color *fill)
-    void resize_rect(float width, float height, Object *rect)
+    void shape_recolor(Object *shape, Color *fill)
+    void rect_resize(Object *rect, float width, float height)
+    void ellipse_resize(Object *ellipse, float width, float height)
     void *object_dealloc(Object *object)
     int window_add_object (Window *window, Object *object)
     int window_remove_object (Window *window, Object *object)

@@ -3,7 +3,7 @@ from math import sin
 
 w = ps.Window("Follow Me!")
 
-for e in range(50):
+for e in range(20):
 	color = (abs(sin(e)), 0, abs(sin(e)), 0.5)
 	w.add(ps.Ellipse(0, 0, e, e, color = color))
 

@@ -365,13 +365,18 @@ Object *make_ellipse_from_shape(Object *shape, float width, float height) {
 	return shape;
 }
 
-void resize_rect(float width, float height, Object *rect){
+void rect_resize(Object *rect, float width, float height){
 	vgClearPath(rect->path_data, VG_PATH_CAPABILITY_ALL);
 	vguRect(rect->path_data, 0, 0, width, height);
 }
 
-void recolor_rect(Object *rect, Color *fill){
-	rect->fill_ref = fill;
+void ellipse_resize(Object *ellipse, float width, float height){
+	vgClearPath(ellipse->path_data, VG_PATH_CAPABILITY_ALL);
+	vguEllipse(ellipse->path_data, 0, 0, width, height);
+}
+
+void shape_recolor(Object *shape, Color *fill) {
+	shape->fill_ref = fill;
 }
 
 void object_dealloc(Object *object) {

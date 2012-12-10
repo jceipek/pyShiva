@@ -172,7 +172,7 @@ cdef class Shape(Entity):
                 self._set_color_to_color_object(Color(*value))
 
     cdef _set_color_to_color_object(self, Color color):
-        cpyshiva.recolor_rect(self._c_object, color._c_color)
+        cpyshiva.shape_recolor(self._c_object, color._c_color)
     
     def __repr__(self):
         return str(self.x, self.y, self.color)
@@ -201,17 +201,15 @@ cdef class Rect(Shape):
         def __get__(self):
             return self._width
         def __set__(self, float value):
-            print 'not supported'
-            #self._width = value
-            #cpyshiva.resize_rect(value, self.height, self._c_object)
+            self._width = value
+            cpyshiva.rect_resize(self._c_object, value, self.height)
 
     property height:
         def __get__(self):
             return self._height
         def __set__(self, float value):
-            print 'not supported'
-            #self._height = value
-            #cpyshiva.resize_rect(self.width, value, self._c_object)
+            self._height = value
+            cpyshiva.rect_resize(self._c_object, self.width, value)
     
     def __repr__(self):
         return str(self.x, self.y, self.width, self.height, self.color)
@@ -238,17 +236,16 @@ cdef class Ellipse(Shape):
         def __get__(self):
             return self._width
         def __set__(self, float value):
-            print 'not supported'
-            #self._width = value
-            #cpyshiva.resize_rect(value, self.height, self._c_object)
+            self._width = value
+            cpyshiva.ellipse_resize(self._c_object, value, self.height)
 
     property height:
         def __get__(self):
             return self._height
         def __set__(self, float value):
             print 'not supported'
-            #self._height = value
-            #cpyshiva.resize_rect(self.width, value, self._c_object)
+            self._height = value
+            cpyshiva.ellipse_resize(self._c_object, self.width, value)
 
     def __repr__(self):
         return str(self.x, self.y, self.width, self.height, self.color)

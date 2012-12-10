@@ -88,7 +88,9 @@ void *group_dealloc(Object *group);
 Object *make_shape(float x, float y, Color *fill);
 Object *make_rect_from_shape(Object *shape, float width, float height);
 Object *make_ellipse_from_shape(Object *shape, float width, float height);
-void resize_rect(float width, float height, Object *rect);
+void shape_recolor(Object *shape, Color *fill);
+void rect_resize(Object *rect, float width, float height);
+void ellipse_resize(Object *ellipse, float width, float height);
 void object_dealloc(Object *object);
 void object_draw (Object *object, float x, float y);
 
