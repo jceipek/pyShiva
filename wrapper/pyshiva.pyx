@@ -243,7 +243,6 @@ cdef class Ellipse(Shape):
         def __get__(self):
             return self._height
         def __set__(self, float value):
-            print 'not supported'
             self._height = value
             cpyshiva.ellipse_resize(self._c_object, self.width, value)
 
