@@ -185,8 +185,7 @@ cdef class Shape(Entity):
         return str((self.x, self.y, self.color))
 
     def __str__(self):
-        #return "Shape at (%f, %f) with color %s" % (self.x, self.y, self.color)
-        return "Shape at (%f, %f) with color %s" % (self.x, self.y, None)
+        return "Shape at (%f, %f) with color %s" % (self.x, self.y, self.color)
      
     # Dealloc inherited from Entity
 
@@ -219,12 +218,10 @@ cdef class Rect(Shape):
             cpyshiva.rect_resize(self._c_object, self.width, value)
     
     def __repr__(self):
-        #return str((self.x, self.y, self.width, self.height, self.color))
-        return str((self.x, self.y, self.width, self.height))
+        return str((self.x, self.y, self.width, self.height, self.color))
 
     def __str__(self):
-        #return "Rect at (%f, %f) with size (%f,%f) and color %s" % (self.x, self.y, self.width, self.height, self.color)
-        return "Rect at (%f, %f) with size (%f,%f)" % (self.x, self.y, self.width, self.height)
+        return "Rect at (%f, %f) with size (%f,%f) and color %s" % (self.x, self.y, self.width, self.height, self.color)
 
     # Dealloc inherited from Entity
 
@@ -258,8 +255,7 @@ cdef class Ellipse(Shape):
         return str((self.x, self.y, self.width, self.height, self.color))
         
     def __str__(self):
-        #return "Ellipse at (%f, %f) with size (%f,%f) and color %s" % (self.x, self.y, self.width, self.height, self.color)
-        return "Ellipse at (%f, %f) with size (%f,%f) and color %s" % (self.x, self.y, self.width, self.height, None)
+        return "Ellipse at (%f, %f) with size (%f,%f) and color %s" % (self.x, self.y, self.width, self.height, self.color)
     # Dealloc inherited from Entity
 
 cdef class Circle(Shape):
@@ -284,8 +280,7 @@ cdef class Circle(Shape):
         return str((self.x, self.y, self.radius, self.color))
         
     def __str__(self):
-        #return "Circle at (%f, %f) with radius %f and color %s" % (self.x, self.y, self.radius, self.color)
-        return "Circle at (%f, %f) with radius %f and color %s" % (self.x, self.y, self.radius, None)
+        return "Circle at (%f, %f) with radius %f and color %s" % (self.x, self.y, self.radius, self.color)
     # Dealloc inherited from Entity
 
 cdef class Window:
