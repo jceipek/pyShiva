@@ -43,6 +43,7 @@ Window *make_window (char *title, int width, int height) {
 	window->bg_color[2] = 0;
 	window->bg_color[3] = 1;
 
+	glfwOpenWindowHint( GLFW_FSAA_SAMPLES, 4 );
 	int n = glfwOpenWindow(width, height, 0,0,0,0,0,8, GLFW_WINDOW);
 	if (!n) {
 		glfwTerminate(); // Cleanup GLFW
@@ -73,6 +74,7 @@ void GLFWCALL window_resize_callback (int width, int height) {
 		main_window->width = width;
 		main_window->height = height;
 		vgResizeSurfaceSH(width, height);
+		//window_refresh(main_window); // XXX: Causes a segfault. Why?
 	}
 }
 

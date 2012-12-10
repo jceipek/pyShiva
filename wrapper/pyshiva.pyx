@@ -253,6 +253,32 @@ cdef class Ellipse(Shape):
         return "Ellipse at (%f, %f) with size (%f,%f) and color %s" % (self.x, self.y, self.width, self.height, self.color)
     # Dealloc inherited from Entity
 
+cdef class Circle(Shape):
+    """A Circle that can be added to groups and the window
+    """
+    cdef float _radius
+
+    def __init__(self, float x=0, float y=0, float radius=5, color=(1,1,1,1)):
+        if not self._inited:
+            Shape.__init__(self, x, y, color)
+            self._radius = radius
+            cpyshiva.make_ellipse_from_shape(self._c_object, radius*2, radius*2)
+            map_c_to_python[<int>self._c_object] = self # TODO: figure out if this is necessary
+    
+    property radius:
+        def __get__(self):
+            return self._radius
+        def __set__(self, float value):
+            self._radius = value
+            cpyshiva.ellipse_resize(self._c_object, value*2, value*2)
+
+    def __repr__(self):
+        return str(self.x, self.y, self.radius, self.color)
+        
+    def __str__(self):
+        return "Circle at (%f, %f) with radius %f and color %s" % (self.x, self.y, self.radius, self.color)
+    # Dealloc inherited from Entity
+
 cdef class Window:
     """A Window that can be created with pyshiva
 

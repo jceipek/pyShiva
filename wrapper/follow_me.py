@@ -1,11 +1,11 @@
 import pyshiva as ps
 from math import sin
 
-w = ps.Window("Follow Me!")
+w = ps.Window(title = "Follow Me!")
 
-for e in range(20):
-	color = (abs(sin(e)), 0, abs(sin(e)), 0.5)
-	w.add(ps.Ellipse(0, 0, e, e, color = color))
+for circle_idx in range(25):
+	rgba = (abs(sin(circle_idx)), 0, abs(sin(circle_idx)), 0.5)
+	w.add(ps.Circle(x = 0, y = 0, radius = circle_idx, color = rgba))
 
 while w.is_open():
 	t = w.s_since_refresh()
