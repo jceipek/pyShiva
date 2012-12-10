@@ -9,12 +9,12 @@ import math, random
 # Create a window with the title "Rose Curves"
 w = ps.Window(title = "Rose Curves")
 
-# Create 500 squares with different colors
-for i in range(500):
+# Create 1000 squares with different colors
+for i in range(1000):
     r = random.random()
     a = abs(math.cos(i))*0.5
     side_length = abs(math.sin(i))*50
-    r = ps.Rect(0,0,side_length,side_length,(r,abs(math.sin(i)),1,0.1))
+    r = ps.Circle(0,0,side_length,(r,abs(math.sin(i)),1,0.1))
     w.add(r) # Add the squares to the window.
 
 k = 0.25 # k is the type of rose curve
