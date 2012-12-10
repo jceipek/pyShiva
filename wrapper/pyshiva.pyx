@@ -1,11 +1,5 @@
 cimport cpyshiva
 
-cdef map_c_to_python
-map_c_to_python = dict()
-
-def madness():
-    print map_c_to_python
-
 def test():
     cpyshiva.demo()
 
@@ -27,7 +21,6 @@ cdef class Color:
         self._b = b
         self._a = a
         self._c_color = cpyshiva.make_color(r, g, b, a)
-        map_c_to_python[<int>self._c_color] = self
 
     property r:
         def __get__(self):
@@ -86,15 +79,16 @@ cdef class Color:
         return "Color with r:%f g:%f b:%f a:%f" % (self._r, self._g, self._b, self._a)
 
     def __dealloc__(self):
-        del map_c_to_python[<int>self._c_color]
         cpyshiva.color_dealloc(self._c_color)
 
 cdef class Entity:
-    cdef bint _inited
-    cdef cpyshiva.Object *_c_object
     """A Entity that can be added to groups and the window
 
     """
+    cdef dict _map_c_to_python
+    cdef bint _inited
+    cdef cpyshiva.Object *_c_object
+
     def __cinit__(self):
         self._inited = False
 
@@ -102,7 +96,6 @@ cdef class Entity:
         if not self._inited:
             self._inited = True
             self._c_object = cpyshiva.make_object(x, y)
-            map_c_to_python[<int>self._c_object] = self
             print 'entity_init'
 
     property x:
@@ -118,7 +111,6 @@ cdef class Entity:
             self._c_object.y = value
 
     def __dealloc__(self):
-        del map_c_to_python[<int>self._c_object]
         cpyshiva.object_dealloc(self._c_object)
 
 cdef class Group(Entity):
@@ -129,12 +121,13 @@ cdef class Group(Entity):
         if not self._inited:
             self._inited = True
             self._c_object = cpyshiva.make_group(x, y)
-            map_c_to_python[<int>self._c_object] = self
 
     def add(self, Entity obj):
+        self._map_c_to_python[<int>obj._c_object] = obj
         cpyshiva.group_add_object(self._c_object, obj._c_object)
 
     def remove(self, Entity obj):
+        del self._map_c_to_python[<int>obj._c_object]
         cpyshiva.group_remove_object(self._c_object, obj._c_object)
 
     def __len__(self):
@@ -143,7 +136,7 @@ cdef class Group(Entity):
     def __getitem__(self, int index):
         obj = cpyshiva.group_get_item(self._c_object, index)
         if obj:
-            return map_c_to_python[<int>obj]
+            return self._map_c_to_python[<int>obj]
         else:
             return None
 
@@ -151,7 +144,7 @@ cdef class Group(Entity):
         def gen_for_objects():
             curr_node = cpyshiva.group_get_first_node(self._c_object)
             while curr_node:
-                yield map_c_to_python[<int>curr_node.contents]
+                yield self._map_c_to_python[<int>curr_node.contents]
                 curr_node = curr_node.next
         
         return gen_for_objects()
@@ -159,6 +152,7 @@ cdef class Group(Entity):
 cdef class Shape(Entity):
     def __init__(self, float x=0, float y=0, color=(1,1,1,1)):
         if not self._inited:
+            self._map_c_to_python = dict()
             self._inited = True
 
             if isinstance(color, Color):
@@ -167,16 +161,14 @@ cdef class Shape(Entity):
             else:
                 self.__init_with_color_object__(x, y, Color(*color))
                 # self._color = Color(*color) # makes a new color object with properties from the iterable
-            map_c_to_python[<int>self._c_object] = self
 
     cdef __init_with_color_object__(self, float x, float y, Color color):
         self._c_object = cpyshiva.make_shape(x, y, color._c_color)
-        map_c_to_python[<int>self._c_object] = self
-
+        self._map_c_to_python[<int>color._c_color] = self
 
     property color:
         def __get__(self):
-            return map_c_to_python[<int>self._c_object.fill_ref]
+            return self._map_c_to_python[<int>self._c_object.fill_ref]
         def __set__(self, value):
             if isinstance(value, Color):
                 self._set_color_to_color_object(value)
@@ -184,13 +176,16 @@ cdef class Shape(Entity):
                 self._set_color_to_color_object(Color(*value))
 
     cdef _set_color_to_color_object(self, Color color):
+        self._map_c_to_python.clear()
+        self._map_c_to_python[<int>self._c_object.fill_ref] = color
         cpyshiva.shape_recolor(self._c_object, color._c_color)
     
     def __repr__(self):
-        return str(self.x, self.y, self.color)
+        return str((self.x, self.y, self.color))
 
     def __str__(self):
-        return "Shape at (%f, %f) with color %s" % (self.x, self.y, self.color)
+        #return "Shape at (%f, %f) with color %s" % (self.x, self.y, self.color)
+        return "Shape at (%f, %f) with color %s" % (self.x, self.y, None)
      
     # Dealloc inherited from Entity
 
@@ -208,7 +203,6 @@ cdef class Rect(Shape):
             self._width = width
             self._height = height
             cpyshiva.make_rect_from_shape(self._c_object, width, height)
-            map_c_to_python[<int>self._c_object] = self # TODO: figure out if this is necessary
     property width:
         def __get__(self):
             return self._width
@@ -224,10 +218,12 @@ cdef class Rect(Shape):
             cpyshiva.rect_resize(self._c_object, self.width, value)
     
     def __repr__(self):
-        return str(self.x, self.y, self.width, self.height, self.color)
+        #return str((self.x, self.y, self.width, self.height, self.color))
+        return str((self.x, self.y, self.width, self.height))
 
     def __str__(self):
-        return "Rect at (%f, %f) with size (%f,%f) and color %s" % (self.x, self.y, self.width, self.height, self.color)
+        #return "Rect at (%f, %f) with size (%f,%f) and color %s" % (self.x, self.y, self.width, self.height, self.color)
+        return "Rect at (%f, %f) with size (%f,%f)" % (self.x, self.y, self.width, self.height)
 
     # Dealloc inherited from Entity
 
@@ -243,7 +239,6 @@ cdef class Ellipse(Shape):
             self._width = width
             self._height = height
             cpyshiva.make_ellipse_from_shape(self._c_object, width, height)
-            map_c_to_python[<int>self._c_object] = self # TODO: figure out if this is necessary
     property width:
         def __get__(self):
             return self._width
@@ -259,10 +254,11 @@ cdef class Ellipse(Shape):
             cpyshiva.ellipse_resize(self._c_object, self.width, value)
 
     def __repr__(self):
-        return str(self.x, self.y, self.width, self.height, self.color)
+        return str((self.x, self.y, self.width, self.height, self.color))
         
     def __str__(self):
-        return "Ellipse at (%f, %f) with size (%f,%f) and color %s" % (self.x, self.y, self.width, self.height, self.color)
+        #return "Ellipse at (%f, %f) with size (%f,%f) and color %s" % (self.x, self.y, self.width, self.height, self.color)
+        return "Ellipse at (%f, %f) with size (%f,%f) and color %s" % (self.x, self.y, self.width, self.height, None)
     # Dealloc inherited from Entity
 
 cdef class Circle(Shape):
@@ -275,7 +271,6 @@ cdef class Circle(Shape):
             Shape.__init__(self, x, y, color)
             self._radius = radius
             cpyshiva.make_ellipse_from_shape(self._c_object, radius*2, radius*2)
-            map_c_to_python[<int>self._c_object] = self # TODO: figure out if this is necessary
     
     property radius:
         def __get__(self):
@@ -285,20 +280,22 @@ cdef class Circle(Shape):
             cpyshiva.ellipse_resize(self._c_object, value*2, value*2)
 
     def __repr__(self):
-        return str(self.x, self.y, self.radius, self.color)
+        return str((self.x, self.y, self.radius, self.color))
         
     def __str__(self):
-        return "Circle at (%f, %f) with radius %f and color %s" % (self.x, self.y, self.radius, self.color)
+        #return "Circle at (%f, %f) with radius %f and color %s" % (self.x, self.y, self.radius, self.color)
+        return "Circle at (%f, %f) with radius %f and color %s" % (self.x, self.y, self.radius, None)
     # Dealloc inherited from Entity
 
 cdef class Window:
     """A Window that can be created with pyshiva
 
     """
+    cdef dict _map_c_to_python
     cdef cpyshiva.Window *_c_window
     def __cinit__(self, char *title="pyshiva", int width=640, int height=480):
+        self._map_c_to_python = dict()
         self._c_window = cpyshiva.make_window(title, width, height)
-        map_c_to_python[<int>self._c_window] = self
 
     property title:
         def __get__(self):
@@ -329,9 +326,11 @@ cdef class Window:
         cpyshiva.window_refresh(self._c_window)
 
     def add(self, Entity obj):
+        self._map_c_to_python[<int>obj._c_object] = obj
         cpyshiva.window_add_object(self._c_window, obj._c_object)
 
     def remove(self, Entity obj):
+        del self._map_c_to_python[<int>obj._c_object]
         cpyshiva.window_remove_object(self._c_window, obj._c_object)
 
     def s_since_open(self):
@@ -346,7 +345,7 @@ cdef class Window:
     def __getitem__(self, int index):
         obj = cpyshiva.window_get_item(self._c_window, index)
         if obj:
-            return map_c_to_python[<int>obj]
+            return self._map_c_to_python[<int>obj]
         else:
             return None
 
@@ -354,13 +353,12 @@ cdef class Window:
         def gen_for_objects():
             curr_node = cpyshiva.window_get_first_node(self._c_window)
             while curr_node:
-                yield map_c_to_python[<int>curr_node.contents]
+                yield self._map_c_to_python[<int>curr_node.contents]
                 curr_node = curr_node.next
         
         return gen_for_objects()
 
     def __dealloc__(self):
-        del map_c_to_python[<int>self._c_window]
         cpyshiva.window_dealloc(self._c_window)
 
 cdef class __global_context__:
