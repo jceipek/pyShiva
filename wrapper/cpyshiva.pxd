@@ -33,7 +33,9 @@ cdef extern from "shiva_wrapper.h":
         LayerList *contains # Set to NULL unless it is a Group
         #    cdef struct:
         #VGPath *path_data # Set to NULL if it is a Group
-        Color *fill_ref # Set to NULL if it is a Group    
+        Color *fill_ref # Set to NULL if it is a Group
+        float stroke_width
+        Color *stroke_ref    
         #LayerNode *layer_node # Set to NULL unless it is part of a Group or Window
 
     Object *make_object(float x, float y)

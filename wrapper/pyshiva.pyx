@@ -181,28 +181,36 @@ cdef class Shape(Entity):
             self._c_object = cpyshiva.make_shape(x, y, fill_color._c_color, stroke_width, NULL)
         self._color = fill_color
         self._stroke_color = stroke_color
-        #self._map_c_to_python[<int>fill_color._c_color] = fill_color
-        #self._map_c_to_python[<int>stroke_color._c_color] = stroke_color
+
+    property stroke_width:
+        def __get__(self):
+            return self._c_object.stroke_width
+        def __set__(self, float value):
+            self._c_object.stroke_width = value
 
     property color:
         def __get__(self):
             return self._color
-            #return self._map_c_to_python[<int>self._c_object.fill_ref]
         def __set__(self, value):
             if isinstance(value, Color):
                 self._set_color_to_color_object(value)
             else:
                 self._set_color_to_color_object(Color(*value))
 
+    property stroke_color:
+        def __get__(self):
+            return self._stroke_color
+        def __set__(self, value):
+            if isinstance(value, Color):
+                self._set_stroke_color_to_color_object(value)
+            else:
+                self._set_stroke_color_to_color_object(Color(*value))
+
     cdef _set_color_to_color_object(self, Color color):
-        #self._map_c_to_python.clear()
-        #self._map_c_to_python[<int>self._c_object.fill_ref] = color
         self._color = color
         cpyshiva.shape_recolor(self._c_object, color._c_color)
 
     cdef _set_stroke_color_to_color_object(self, Color color):
-        #self._map_c_to_python.clear()
-        #self._map_c_to_python[<int>self._c_object.fill_ref] = color
         self._stroke_color = color
         cpyshiva.shape_recolor(self._c_object, color._c_color)    
     
