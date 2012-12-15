@@ -75,7 +75,7 @@ typedef struct Object {
 		struct { // Used by standard objects (not groups)
 			VGPath *path_data;
 			struct Color *fill_ref;
-			float stroke_width;
+			float stroke_thickness;
 			struct Color *stroke_ref;
 		};
 	};

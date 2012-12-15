@@ -340,18 +340,18 @@ Object *make_object(float x, float y) {
 	object->layer_node = NULL;
 	object->path_data = NULL;
 	object->fill_ref = NULL;
-	object->stroke_width = 0.0f;
+	object->stroke_thickness = 0.0f;
 	object->stroke_ref = NULL;
 	return object;
 }
 
-Object *make_shape(float x, float y, Color *fill, float stroke_width, Color *stroke) {
+Object *make_shape(float x, float y, Color *fill, float stroke_thickness, Color *stroke) {
 	Object *object = make_object(x, y);
 	VGPath path = vgCreatePath(VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F,
 								1,0,0,0, VG_PATH_CAPABILITY_ALL);
 	object->path_data = path;
 	object->fill_ref = fill;
-	object->stroke_width = stroke_width;
+	object->stroke_thickness = stroke_thickness;
 	object->stroke_ref = stroke;
 	return object;
 }
@@ -413,7 +413,7 @@ void object_draw (Object *object, float x, float y) {
 		vgSetPaint(object->fill_ref->paint, VG_FILL_PATH);
 		vgDrawPath(object->path_data, VG_FILL_PATH);
 		if (object->stroke_ref != NULL) {
-				vgSetf(VG_STROKE_LINE_WIDTH, object->stroke_width);
+				vgSetf(VG_STROKE_LINE_WIDTH, object->stroke_thickness);
 				vgSetPaint(object->stroke_ref->paint, VG_STROKE_PATH);
 				vgDrawPath(object->path_data, VG_STROKE_PATH);
 		}

@@ -155,38 +155,38 @@ cdef class Shape(Entity):
     cdef Color _color
     cdef Color _stroke_color
 
-    def __init__(self, float x=0, float y=0, color=(1,1,1,1), stroke_color=None, stroke_width=1.0):
+    def __init__(self, float x=0, float y=0, color=(1,1,1,1), stroke_color=None, stroke_thickness=1.0):
         if not self._inited:
             self._inited = True
 
             if isinstance(color, Color):
                 if isinstance(stroke_color, Color):
-                    self.__init_with_color_object__(x, y, color, stroke_color, stroke_width)
+                    self.__init_with_color_object__(x, y, color, stroke_color, stroke_thickness)
                 elif not stroke_color is None:
-                    self.__init_with_color_object__(x, y, color, Color(*stroke_color), stroke_width)
+                    self.__init_with_color_object__(x, y, color, Color(*stroke_color), stroke_thickness)
                 else:
-                    self.__init_with_color_object__(x, y, color, None, stroke_width)
+                    self.__init_with_color_object__(x, y, color, None, stroke_thickness)
             else:
                 if isinstance(stroke_color, Color):
-                    self.__init_with_color_object__(x, y, Color(*color), stroke_color, stroke_width)
+                    self.__init_with_color_object__(x, y, Color(*color), stroke_color, stroke_thickness)
                 elif not stroke_color is None:
-                    self.__init_with_color_object__(x, y, Color(*color), Color(*stroke_color), stroke_width)
+                    self.__init_with_color_object__(x, y, Color(*color), Color(*stroke_color), stroke_thickness)
                 else:
-                    self.__init_with_color_object__(x, y, Color(*color), None, stroke_width)
+                    self.__init_with_color_object__(x, y, Color(*color), None, stroke_thickness)
 
-    cdef __init_with_color_object__(self, float x, float y, Color fill_color, Color stroke_color, float stroke_width):
+    cdef __init_with_color_object__(self, float x, float y, Color fill_color, Color stroke_color, float stroke_thickness):
         if stroke_color:
-            self._c_object = cpyshiva.make_shape(x, y, fill_color._c_color, stroke_width, stroke_color._c_color)
+            self._c_object = cpyshiva.make_shape(x, y, fill_color._c_color, stroke_thickness, stroke_color._c_color)
         else:
-            self._c_object = cpyshiva.make_shape(x, y, fill_color._c_color, stroke_width, NULL)
+            self._c_object = cpyshiva.make_shape(x, y, fill_color._c_color, stroke_thickness, NULL)
         self._color = fill_color
         self._stroke_color = stroke_color
 
-    property stroke_width:
+    property stroke_thickness:
         def __get__(self):
-            return self._c_object.stroke_width
+            return self._c_object.stroke_thickness
         def __set__(self, float value):
-            self._c_object.stroke_width = value
+            self._c_object.stroke_thickness = value
 
     property color:
         def __get__(self):
@@ -230,9 +230,9 @@ cdef class Rect(Shape):
     cdef float _width
     cdef float _height
 
-    def __init__(self, float x=0, float y=0, float width=20, float height=10, color=(1,1,1,1), stroke_color=None, stroke_width=1.0):
+    def __init__(self, float x=0, float y=0, float width=20, float height=10, color=(1,1,1,1), stroke_color=None, stroke_thickness=1.0):
         if not self._inited:
-            Shape.__init__(self, x, y, color, stroke_color, stroke_width)
+            Shape.__init__(self, x, y, color, stroke_color, stroke_thickness)
             self._width = width
             self._height = height
             cpyshiva.make_rect_from_shape(self._c_object, width, height)
@@ -264,9 +264,9 @@ cdef class Ellipse(Shape):
     cdef float _width
     cdef float _height
 
-    def __init__(self, float x=0, float y=0, float width=20, float height=10, color=(1,1,1,1), stroke_color=None, stroke_width=1.0):
+    def __init__(self, float x=0, float y=0, float width=20, float height=10, color=(1,1,1,1), stroke_color=None, stroke_thickness=1.0):
         if not self._inited:
-            Shape.__init__(self, x, y, color, stroke_color, stroke_width)
+            Shape.__init__(self, x, y, color, stroke_color, stroke_thickness)
             self._width = width
             self._height = height
             cpyshiva.make_ellipse_from_shape(self._c_object, width, height)
@@ -296,9 +296,9 @@ cdef class Circle(Shape):
     """
     cdef float _radius
 
-    def __init__(self, float x=0, float y=0, float radius=5, color=(1,1,1,1), stroke_color=None, stroke_width=1.0):
+    def __init__(self, float x=0, float y=0, float radius=5, color=(1,1,1,1), stroke_color=None, stroke_thickness=1.0):
         if not self._inited:
-            Shape.__init__(self, x, y, color, stroke_color, stroke_width)
+            Shape.__init__(self, x, y, color, stroke_color, stroke_thickness)
             self._radius = radius
             cpyshiva.make_ellipse_from_shape(self._c_object, radius*2, radius*2)
     

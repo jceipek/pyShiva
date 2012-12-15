@@ -34,12 +34,12 @@ cdef extern from "shiva_wrapper.h":
         #    cdef struct:
         #VGPath *path_data # Set to NULL if it is a Group
         Color *fill_ref # Set to NULL if it is a Group
-        float stroke_width
+        float stroke_thickness
         Color *stroke_ref    
         #LayerNode *layer_node # Set to NULL unless it is part of a Group or Window
 
     Object *make_object(float x, float y)
-    Object *make_shape(float x, float y, Color *fill, float stroke_width, Color *stroke)
+    Object *make_shape(float x, float y, Color *fill, float stroke_thickness, Color *stroke)
     Object *make_rect_from_shape(Object *shape, float width, float height)
     Object *make_ellipse_from_shape(Object *shape, float width, float height)
 
