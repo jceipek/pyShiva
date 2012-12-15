@@ -71,10 +71,12 @@ typedef struct Object {
 	float x, y;
 	enum OBJECT_TYPE type;
 	union {
-		struct LayerList *contains; // Set to NULL unless it is a Group
-		struct {
-			VGPath *path_data; // Set to NULL if it is a Group
-			struct Color *fill_ref; // Set to NULL if it is a Group
+		struct LayerList *contains; // Used by groups
+		struct { // Used by standard objects (not groups)
+			VGPath *path_data;
+			struct Color *fill_ref;
+			float stroke_width;
+			struct Color *stroke_ref;
 		};
 	};
 	struct LayerNode *layer_node; // Set to NULL unless it is part of a Group or Window
@@ -85,10 +87,11 @@ Object *make_group(float x, float y);
 int group_add_object (Object *group, Object *object);
 int group_remove_object (Object *group, Object *object);
 void *group_dealloc(Object *group);
-Object *make_shape(float x, float y, Color *fill);
+Object *make_shape(float x, float y, Color *fill, float stroke_width, Color *stroke);
 Object *make_rect_from_shape(Object *shape, float width, float height);
 Object *make_ellipse_from_shape(Object *shape, float width, float height);
 void shape_recolor(Object *shape, Color *fill);
+void shape_recolor_stroke(Object *shape, Color *stroke);
 void rect_resize(Object *rect, float width, float height);
 void ellipse_resize(Object *ellipse, float width, float height);
 void object_dealloc(Object *object);

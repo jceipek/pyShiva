@@ -37,12 +37,13 @@ cdef extern from "shiva_wrapper.h":
         #LayerNode *layer_node # Set to NULL unless it is part of a Group or Window
 
     Object *make_object(float x, float y)
-    Object *make_shape(float x, float y, Color *fill)
+    Object *make_shape(float x, float y, Color *fill, float stroke_width, Color *stroke)
     Object *make_rect_from_shape(Object *shape, float width, float height)
     Object *make_ellipse_from_shape(Object *shape, float width, float height)
 
 
     void shape_recolor(Object *shape, Color *fill)
+    void shape_recolor_stroke(Object *shape, Color *stroke)
     void rect_resize(Object *rect, float width, float height)
     void ellipse_resize(Object *ellipse, float width, float height)
     void *object_dealloc(Object *object)

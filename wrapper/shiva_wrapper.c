@@ -85,9 +85,6 @@ void window_set_bg(Window *window, float r, float g, float b) {
 }
 
 void window_refresh (Window *window) {
-	// TODO: make this loop through every element of the variable size
-	// datastructure the window will have.
-
 	window->s_last_refresh_time = glfwGetTime();
 
 	vgSetfv(VG_CLEAR_COLOR, 4, window->bg_color);
@@ -343,15 +340,19 @@ Object *make_object(float x, float y) {
 	object->layer_node = NULL;
 	object->path_data = NULL;
 	object->fill_ref = NULL;
+	object->stroke_width = 0.0f;
+	object->stroke_ref = NULL;
 	return object;
 }
 
-Object *make_shape(float x, float y, Color *fill){
+Object *make_shape(float x, float y, Color *fill, float stroke_width, Color *stroke) {
 	Object *object = make_object(x, y);
 	VGPath path = vgCreatePath(VG_PATH_FORMAT_STANDARD, VG_PATH_DATATYPE_F,
 								1,0,0,0, VG_PATH_CAPABILITY_ALL);
 	object->path_data = path;
 	object->fill_ref = fill;
+	object->stroke_width = stroke_width;
+	object->stroke_ref = stroke;
 	return object;
 }
 
@@ -378,7 +379,11 @@ void ellipse_resize(Object *ellipse, float width, float height){
 }
 
 void shape_recolor(Object *shape, Color *fill) {
-	shape->fill_ref = fill;
+	shape->fill_ref = fill; // NOTE: fill needs to get deallocated on the Python end
+}
+
+void shape_recolor_stroke(Object *shape, Color *stroke) {
+	shape->stroke_ref = stroke; // NOTE: stroke needs to get deallocated on the Python end
 }
 
 void object_dealloc(Object *object) {
@@ -396,9 +401,8 @@ void object_dealloc(Object *object) {
     
     else if (object->path_data != NULL) {
     	vgDestroyPath(object->path_data);
-        //VGPath free(object->path_data); //TODO: Look up syntax, implement
     }
-    // NOTE: the color ref'd by color_ref needs to get deallocated manually elsewhere
+    // NOTE: the colors ref'd by color_ref and stroke_ref needs to get deallocated manually elsewhere
 
     free(object);
 }
@@ -407,7 +411,12 @@ void object_draw (Object *object, float x, float y) {
 	vgTranslate(x, y);
 	if (object->type != OBJECT_GROUP) {
 		vgSetPaint(object->fill_ref->paint, VG_FILL_PATH);
-		vgDrawPath(object->path_data, VG_FILL_PATH); // TODO: Make this not just be a rect!
+		vgDrawPath(object->path_data, VG_FILL_PATH);
+		if (object->stroke_ref != NULL) {
+				vgSetf(VG_STROKE_LINE_WIDTH, object->stroke_width);
+				vgSetPaint(object->stroke_ref->paint, VG_STROKE_PATH);
+				vgDrawPath(object->path_data, VG_STROKE_PATH);
+		}
 	} else {
 		LayerNode *curr;
 		curr = object->contains->first;
@@ -505,6 +514,7 @@ void module_dealloc() {
 }
 
 int demo() {
+	/*
 	int running = GL_TRUE;
 
 	// Initialize GLFW, create a ShivaVG context, open a window
@@ -538,6 +548,8 @@ int demo() {
 	window_add_object(win, demo_object2);
 	window_add_object(win, demo_object3);
 
+	*/
+
 	/*object_dealloc(demo_object);
 	object_dealloc(demo_object2);
 	object_dealloc(demo_object3);*/
@@ -555,9 +567,13 @@ int demo() {
 	window_remove_object(win, demo_object);
 	window_add_object(win, demo_object);
 */
+
+	/*
 	group_add_object(group, group2);
 
 	window_add_object(win, group);
+
+	*/
 
 	//group_remove_object(group, group2);
 
@@ -573,7 +589,7 @@ int demo() {
 
 	*/
 
-
+	/*
 	while (running) {
 		window_refresh(win);
 
@@ -597,5 +613,7 @@ int demo() {
 
 	module_dealloc();
 	
+	*/
+
 	return 0;
 }
