@@ -4,8 +4,8 @@ import random
 import time
 import math
 
-sizex = 80
-sizey = 60
+sizex = 60
+sizey = 45
 timeconstant = 3.0
 time_start = time.time()
 
@@ -38,7 +38,7 @@ im.thumbnail((sizex, sizey))
 jigglers = []
 sizex, sizey = im.size
 
-win = ps.Window("THE JPEGGLER", width=sizex*16, height=sizey*16)
+win = ps.Window("THE JPEGGLER", width=sizex*10, height=sizey*10)
 
 for x in range(sizex):
 	for y in range(sizey):

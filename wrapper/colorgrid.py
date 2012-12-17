@@ -7,7 +7,7 @@ import pyshiva as ps
 import math, random
 
 # Create a window with the title "Color Grid"
-w = ps.Window(title = "Color Grid")
+w = ps.Window(title = "Color Grid", width=500, height=500)
 
 all_rects = list()
 all_colors = list()
