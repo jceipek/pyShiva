@@ -156,7 +156,7 @@ void window_dealloc (Window *window) { // XXX: TODO: return deallocation success
 void get_mouse_pos(int *x, int *y) {
 	if (main_window != NULL) {
 		glfwGetMousePos(x, y);
-		*y = main_window->height - *y;
+		*y = main_window->height - *y; // Make the origin at the bottom left
 	} else { // Window not allocated!
 		*x = 0;
 		*y = 0;

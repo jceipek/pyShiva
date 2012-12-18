@@ -1,15 +1,22 @@
 cimport cpyshiva
 
-def test():
-    cpyshiva.demo()
-
 def get_mouse_pos():
+    '''Get the integer x,y position of the mouse cursor.
+
+    The bottom left corner of the window is at (0,0). 
+    Values increase upwards and to the right.
+    '''
     cdef int x
     cdef int y
     cpyshiva.get_mouse_pos(&x, &y)
     return (x, y)
 
 cdef Color make_color_if_needed(color):
+    '''Create a color object as appropriate based on the input color.
+
+    If the input color is already a color object, the object itself will be returned.
+    If the input is None, a fully translucent color will be returned.
+    '''
     if isinstance(color, Color):
         return color
     elif not color:
@@ -18,6 +25,10 @@ cdef Color make_color_if_needed(color):
         return Color(*color)
 
 cdef class Color:
+    '''A Color in r,g,b,a space.
+
+    Colors have an opacity associated with them via an alpha channel.
+    '''
     cdef cpyshiva.Color *_c_color
     cdef float _r
     cdef float _g
@@ -31,14 +42,19 @@ cdef class Color:
         self._c_color = cpyshiva.make_color(r, g, b, a)
 
     property r:
+        '''The red color channel can range from 0 (no red content) to 1 (full red)
+
+        '''
         def __get__(self):
             return self._r
         def __set__(self, float value):
             self._r = value
             self._c_color = cpyshiva.color_change(self._c_color, value, 0)
 
-
     property g:
+        '''The green color channel can range from 0 (no green content) to 1 (full green)
+
+        '''
         def __get__(self):
             return self._g
         def __set__(self, float value):
@@ -46,6 +62,9 @@ cdef class Color:
             self._c_color = cpyshiva.color_change(self._c_color, value, 1)
 
     property b:
+        '''The blue color channel can range from 0 (no blue content) to 1 (full blue)
+
+        '''
         def __get__(self):
             return self._b
         def __set__(self, float value):
@@ -53,6 +72,9 @@ cdef class Color:
             self._c_color = cpyshiva.color_change(self._c_color, value, 2)
 
     property a:
+        '''The alpha color channel can range from 0 (transparent) to 1 (opaque)
+
+        '''
         def __get__(self):
             return self._a
         def __set__(self, float value):
@@ -60,6 +82,9 @@ cdef class Color:
             self._c_color = cpyshiva.color_change(self._c_color, value, 3)
 
     property values:
+        '''Use this property to modify the values of the color all at once.
+
+        '''
         def __get__(self):
             return (self._r, self._g, self._b, self._a)
 
@@ -308,11 +333,13 @@ cdef class Window:
     """A Window that can be created with pyshiva
 
     """
+    cdef _bg_color
     cdef dict _map_c_to_python
     cdef cpyshiva.Window *_c_window
-    def __cinit__(self, char *title="pyshiva", int width=640, int height=480):
+    def __cinit__(self, char *title="pyshiva", int width=640, int height=480, bg_color=(0,0,0,1)):
         self._map_c_to_python = dict()
         self._c_window = cpyshiva.make_window(title, width, height)
+        self._set_bg_color_to_color_object(make_color_if_needed(bg_color))
 
     property title:
         def __get__(self):
@@ -333,8 +360,14 @@ cdef class Window:
             cpyshiva.window_set_size(self._c_window, self._c_window.width, value)
 
     property bg_color:
+        def __get__(self):
+            return self._bg_color
         def __set__(self, color):
-            cpyshiva.window_set_bg(self._c_window, <float>color[0], <float>color[1], <float>color[2])
+            self._set_bg_color_to_color_object(make_color_if_needed(color))
+
+    cdef _set_bg_color_to_color_object(self, Color color):
+        self._bg_color = color
+        cpyshiva.window_set_bg(self._c_window, <float>color[0], <float>color[1], <float>color[2])
 
     def is_open(self):
         return cpyshiva.window_isopen(self._c_window)
