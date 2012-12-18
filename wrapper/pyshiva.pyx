@@ -9,6 +9,14 @@ def get_mouse_pos():
     cpyshiva.get_mouse_pos(&x, &y)
     return (x, y)
 
+cdef Color make_color_if_needed(color):
+    if isinstance(color, Color):
+        return color
+    elif not color:
+        return Color(0,0,0,0) #Transparent black
+    else:
+        return Color(*color)
+
 cdef class Color:
     cdef cpyshiva.Color *_c_color
     cdef float _r
@@ -158,21 +166,7 @@ cdef class Shape(Entity):
     def __init__(self, float x=0, float y=0, color=(1,1,1,1), stroke_color=None, stroke_thickness=1.0):
         if not self._inited:
             self._inited = True
-
-            if isinstance(color, Color):
-                if isinstance(stroke_color, Color):
-                    self.__init_with_color_object__(x, y, color, stroke_color, stroke_thickness)
-                elif not stroke_color is None:
-                    self.__init_with_color_object__(x, y, color, Color(*stroke_color), stroke_thickness)
-                else:
-                    self.__init_with_color_object__(x, y, color, None, stroke_thickness)
-            else:
-                if isinstance(stroke_color, Color):
-                    self.__init_with_color_object__(x, y, Color(*color), stroke_color, stroke_thickness)
-                elif not stroke_color is None:
-                    self.__init_with_color_object__(x, y, Color(*color), Color(*stroke_color), stroke_thickness)
-                else:
-                    self.__init_with_color_object__(x, y, Color(*color), None, stroke_thickness)
+            self.__init_with_color_object__(x, y, make_color_if_needed(color), make_color_if_needed(stroke_color), stroke_thickness)
 
     cdef __init_with_color_object__(self, float x, float y, Color fill_color, Color stroke_color, float stroke_thickness):
         if stroke_color:
@@ -192,19 +186,13 @@ cdef class Shape(Entity):
         def __get__(self):
             return self._color
         def __set__(self, value):
-            if isinstance(value, Color):
-                self._set_color_to_color_object(value)
-            else:
-                self._set_color_to_color_object(Color(*value))
+            self._set_color_to_color_object(make_color_if_needed(value))
 
     property stroke_color:
         def __get__(self):
             return self._stroke_color
         def __set__(self, value):
-            if isinstance(value, Color):
-                self._set_stroke_color_to_color_object(value)
-            else:
-                self._set_stroke_color_to_color_object(Color(*value))
+            self._set_stroke_color_to_color_object(make_color_if_needed(value))
 
     cdef _set_color_to_color_object(self, Color color):
         self._color = color
@@ -379,6 +367,7 @@ cdef class Window:
             return None
 
     def __iter__(self):
+        # NOTE: Removing objects while iterating through them is unsafe!
         def gen_for_objects():
             curr_node = cpyshiva.window_get_first_node(self._c_window)
             while curr_node:

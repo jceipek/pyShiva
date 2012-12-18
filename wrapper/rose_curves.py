@@ -10,11 +10,11 @@ import math, random
 w = ps.Window(title = "Rose Curves")
 
 # Create 1000 squares with different colors
-for i in range(2000):
+for i in range(1000):
     r = random.random()
     a = abs(math.cos(i))*0.5
     side_length = abs(math.sin(i))*50
-    r = ps.Ellipse(0,0,side_length,side_length,(r,abs(math.sin(i)),1,0.1))
+    r = ps.Circle(0,0,radius = side_length,color = (r,abs(math.sin(i)),1,0.1),stroke_color = (0,0,0,0.8), stroke_thickness = 5.0)
     w.add(r) # Add the rectangles to the window.
 
 k = 0.25
@@ -25,8 +25,8 @@ while w.is_open():
     if radius < 0.01: # Every time the curve collapses...
         k = random.random() # Randomize the k value to change the type of the curve
     #k = float(x)/w.width
-    print k
-    print r.width
+    #print k
+    #print r.radius
     #k = 0.760935
     # Place every rectangle along a rose curve, offset by its index
     for (i,r) in enumerate(w): # Loop through every object in the window
