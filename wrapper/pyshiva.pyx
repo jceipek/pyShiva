@@ -92,18 +92,32 @@ cdef class Color:
             for i,v in enumerate(iter_value):
                 if i > 3:
                     raise IndexError("colors have 4 channels: r,g,b,a")
-                self._c_color = cpyshiva.color_change(self._c_color, <float>v, i)
+                self.__setitem__(self, i, <float>v)
 
     def __getitem__(self, int index):
         if index == 0:
             return self._r
-        if index == 1:
+        elif index == 1:
             return self._g
-        if index == 2:
+        elif index == 2:
             return self._b
-        if index == 3:
+        elif index == 3:
             return self._a
         raise IndexError("colors have 4 channels: r,g,b,a")
+
+    def __setitem__(self, int index, float value):
+        print index, value
+        if index == 0:
+            self._r = value
+        elif index == 1:
+            self._g = value
+        elif index == 2:
+            self._b = value
+        elif index == 3:
+            self._a = value
+        else:
+            raise IndexError("colors have 4 channels: r,g,b,a")    
+        self._c_color = cpyshiva.color_change(self._c_color, value, index)
 
     def __repr__(self):
         return str((self._r, self._g, self._b, self._a))
@@ -115,9 +129,9 @@ cdef class Color:
         cpyshiva.color_dealloc(self._c_color)
 
 cdef class Entity:
-    """A Entity that can be added to groups and the window
+    '''A Entity that can be added to groups and the window
 
-    """
+    '''
     cdef bint _inited
     cdef cpyshiva.Object *_c_object
 
@@ -146,9 +160,9 @@ cdef class Entity:
         cpyshiva.object_dealloc(self._c_object)
 
 cdef class Group(Entity):
-    """A Group
+    '''A Group
 
-    """
+    '''
     cdef dict _map_c_to_python
 
     def __init__(self, float x=0, float y=0):
@@ -185,6 +199,14 @@ cdef class Group(Entity):
         return gen_for_objects()
 
 cdef class Shape(Entity):
+    '''Shapes are core graphics primitives that can be added to windows and groups.
+
+    Making a shape directly is currently senseless, because it doesn't have a visual representation.
+    In the future, shapes in pyshiva will support arbitrary paths. For now, we strongly suggest
+    that you use the shape subclasses (Rect, Ellipse, and Circle) and subclasses thereof to create objects you want to display.
+    
+    All shapes have an x,y position in window coordinates as well as a color, a stroke thickness, and a stroke color.
+    '''
     cdef Color _color
     cdef Color _stroke_color
 
@@ -238,8 +260,12 @@ cdef class Shape(Entity):
 
 
 cdef class Rect(Shape):
-    """A Rect that can be added to groups and the window
-    """
+    '''Rectangles are graphics primitives that can be added to windows and groups.
+    
+    Their x,y position specifies the position of their bottom left corner, which is
+    consistent with the cartesian coordinate system that pyshiva uses.
+    The size of a rectangle is specified using width and height.
+    '''
     cdef float _width
     cdef float _height
 
@@ -272,8 +298,11 @@ cdef class Rect(Shape):
     # Dealloc inherited from Entity
 
 cdef class Ellipse(Shape):
-    """A Ellipse that can be added to groups and the window
-    """
+    '''Ellipses are graphics primitives that can be added to windows and groups.
+    
+    Unlike rectangles, their x,y position specifies their center rather than their corner.
+    Unlike circles, ellipses have no radius. Instead, their size is specified by a width and height.
+    '''
     cdef float _width
     cdef float _height
 
@@ -305,8 +334,11 @@ cdef class Ellipse(Shape):
     # Dealloc inherited from Entity
 
 cdef class Circle(Shape):
-    """A Circle that can be added to groups and the window
-    """
+    '''Circles are graphics primitives that can be added to windows and groups.
+    
+    Unlike rectangles, their x,y position specifies their center rather than their corner.
+    Circles have a radius that specifies their size.
+    '''
     cdef float _radius
 
     def __init__(self, float x=0, float y=0, float radius=5, color=(1,1,1,1), stroke_color=None, stroke_thickness=1.0):
@@ -316,6 +348,10 @@ cdef class Circle(Shape):
             cpyshiva.make_ellipse_from_shape(self._c_object, radius*2, radius*2)
     
     property radius:
+        '''The radius of the circle specifies the size of the circle.
+
+        Note: the radius does not include the stroke stroke thickness.
+        '''
         def __get__(self):
             return self._radius
         def __set__(self, float value):
@@ -330,9 +366,21 @@ cdef class Circle(Shape):
     # Dealloc inherited from Entity
 
 cdef class Window:
-    """A Window that can be created with pyshiva
+    '''A Window that will contain any vector graphics objects that it contains.
 
-    """
+    To maintain input responsiveness, we suggest the following usage:
+
+        while window.is_open():
+            # move objects and add new objects as desired
+            window.refresh()
+
+    The coordinate system of the window is the same as everywhere else in pyshiva;
+    the bottom left corner of the window is at (0,0) and values increase upwards and to the right.
+
+    Note: Due to limitations of ShivaVG and GLFW, once the window is closed, no
+    new window can currently be created after an existing window is closed.
+    Furthermore, a window must exist before any pyshiva objects can be created.
+    '''
     cdef _bg_color
     cdef dict _map_c_to_python
     cdef cpyshiva.Window *_c_window
@@ -342,24 +390,37 @@ cdef class Window:
         self._set_bg_color_to_color_object(make_color_if_needed(bg_color))
 
     property title:
+        '''The text to display in the window's titlebar
+
+        '''
         def __get__(self):
             return self._c_window.title
         def __set__(self, char *value):
             cpyshiva.window_set_title (self._c_window, value)
 
     property width:
+        '''The width of the window, in pixels.
+
+        '''
         def __get__(self):
             return self._c_window.width
         def __set__(self, int value):
             cpyshiva.window_set_size(self._c_window, value, self._c_window.height)
 
     property height:
+        '''The height of the window, in pixels.
+
+        '''
         def __get__(self):
             return self._c_window.height
         def __set__(self, int value):
             cpyshiva.window_set_size(self._c_window, self._c_window.width, value)
 
     property bg_color:
+        '''The background color of the window.
+
+        Note that the alpha channel in this color has no effect.
+        '''
         def __get__(self):
             return self._bg_color
         def __set__(self, color):
@@ -370,29 +431,72 @@ cdef class Window:
         cpyshiva.window_set_bg(self._c_window, <float>color[0], <float>color[1], <float>color[2])
 
     def is_open(self):
+        '''Is the window currently open?
+
+        Note: if the window is not currently open, it will no longer be possible
+        to create or manipulate vector graphics objects due to the limitations
+        of GLFW and ShivaVG
+        '''
         return cpyshiva.window_isopen(self._c_window)
 
     def refresh(self):
+        '''Update the contents of the window and handle input.
+
+        We suggest using this function as part of a main loop to maintain responsiveness:
+
+            while window.is_open():
+                # move objects and add new objects as desired
+                window.refresh()
+        '''
         cpyshiva.window_refresh(self._c_window)
 
     def add(self, Entity obj):
+        '''Add an entity to the window. 
+
+        It will be added above any other objects already in the window.
+        The entity could be a group, a pyshiva vector graphics
+        primitive, or a user-created subclass of one of these things.
+        The next time `window.refresh()` is called, the entity will be drawn on the screen
+        (if it is within the window bounds).
+        '''
         self._map_c_to_python[<int>obj._c_object] = obj
         cpyshiva.window_add_object(self._c_window, obj._c_object)
 
     def remove(self, Entity obj):
+        '''Remove an entity from the window.
+
+        '''
         del self._map_c_to_python[<int>obj._c_object]
         cpyshiva.window_remove_object(self._c_window, obj._c_object)
 
     def s_since_open(self):
+        '''The amount of time that the window has been open, in seconds.
+        
+        '''
         return cpyshiva.glfwGetTime()
 
     def s_since_refresh(self):
+        '''The amount of time since the window has refreshed, in seconds.
+
+        This is useful for computing the distance that an object should move in a
+        discrete-timestep simulation such as a game.
+        '''
         return cpyshiva.glfwGetTime() - self._c_window.s_last_refresh_time
 
     def __len__(self):
+        '''The amount of entities contained directly in the window.
+
+        Note: this number is not recursive; if the window contains a group,
+        with 100 objects, the objects inside the group do not contribute to
+        the amount.
+        '''
         return self._c_window.contents.length
 
     def __getitem__(self, int index):
+        '''Indexing into the window like a list returns the entity on the layer provided as a key.
+
+        Layer 0 is the lowest layer.
+        '''
         obj = cpyshiva.window_get_item(self._c_window, index)
         if obj:
             return self._map_c_to_python[<int>obj]
@@ -400,7 +504,15 @@ cdef class Window:
             return None
 
     def __iter__(self):
-        # NOTE: Removing objects while iterating through them is unsafe!
+        '''The window supports iteration of the form:
+            for entity in window:
+                #do something with the entity
+
+        Entities are in order from lowest object to highest object in the layer stack.
+
+        This provides a simple way to filter objects.
+        NOTE: Removing objects while iterating through them is unsafe!
+        '''
         def gen_for_objects():
             curr_node = cpyshiva.window_get_first_node(self._c_window)
             while curr_node:
@@ -413,6 +525,11 @@ cdef class Window:
         cpyshiva.window_dealloc(self._c_window)
 
 cdef class __global_context__:
+    '''The pyshiva global context provides an internal way for pyshiva to ensure that the 
+    OpenGL and ShivaVG graphics contexts are deallocated after every other object. This avoids
+    memory leaks and segfaults.
+
+    '''
     def __dealloc__(self):
         cpyshiva.module_dealloc()
 
