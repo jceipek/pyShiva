@@ -106,7 +106,6 @@ cdef class Color:
         raise IndexError("colors have 4 channels: r,g,b,a")
 
     def __setitem__(self, int index, float value):
-        print index, value
         if index == 0:
             self._r = value
         elif index == 1:
@@ -424,11 +423,11 @@ cdef class Window:
         def __get__(self):
             return self._bg_color
         def __set__(self, color):
-            self._set_bg_color_to_color_object(make_color_if_needed(color))
+            self._set_bg_color_to_color_object(make_color_if_needed(color)) 
 
     cdef _set_bg_color_to_color_object(self, Color color):
         self._bg_color = color
-        cpyshiva.window_set_bg(self._c_window, <float>color[0], <float>color[1], <float>color[2])
+        cpyshiva.window_set_bg_color(self._c_window, color._c_color)
 
     def is_open(self):
         '''Is the window currently open?

@@ -38,10 +38,7 @@ Window *make_window (char *title, int width, int height) {
 	window->height = height;
 	window->contents = make_layerList();
 	window->s_last_refresh_time = 0.0;
-	window->bg_color[0] = 0;
-	window->bg_color[1] = 0;
-	window->bg_color[2] = 0;
-	window->bg_color[3] = 1;
+	window->bg_color = NULL;
 
 	glfwOpenWindowHint( GLFW_FSAA_SAMPLES, 4 );
 	int n = glfwOpenWindow(width, height, 0,0,0,0,0,8, GLFW_WINDOW);
@@ -78,16 +75,16 @@ void GLFWCALL window_resize_callback (int width, int height) {
 	}
 }
 
-void window_set_bg(Window *window, float r, float g, float b) {
-	window->bg_color[0] = r;
-	window->bg_color[1] = g;
-	window->bg_color[2] = b;
+void window_set_bg_color(Window *window, Color *bg_color) {
+	window->bg_color = bg_color;
 }
 
 void window_refresh (Window *window) {
 	window->s_last_refresh_time = glfwGetTime();
 
-	vgSetfv(VG_CLEAR_COLOR, 4, window->bg_color);
+	if (window->bg_color != NULL) {
+		vgSetfv(VG_CLEAR_COLOR, 4, window->bg_color->paint_array);	
+	}
 	vgClear(0, 0, window->width, window->height);
 	
 	LayerNode *curr;

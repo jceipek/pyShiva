@@ -108,7 +108,7 @@ typedef struct Window {
 	//  How long since the window opened
 	double s_last_refresh_time;
 
-	VGfloat bg_color[4];
+	Color *bg_color;
 } Window;
 
 Window *make_window (char *title, int width, int height);
@@ -123,7 +123,7 @@ void window_set_title (Window *window, char *title);
 int window_add_object (Window *window, Object *object);
 int window_remove_object (Window *window, Object *object);
 
-void window_set_bg(Window *window, float r, float g, float b);
+void window_set_bg_color(Window *window, Color *bg_color);
 
 
 Object *window_get_item(Window *window, int index);

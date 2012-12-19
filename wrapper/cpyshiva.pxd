@@ -8,6 +8,7 @@ cdef extern from "shiva_wrapper.h":
         int width
         int height
         char *title
+        Color *bg_color
         double s_last_refresh_time
         LayerList *contents
 
@@ -51,7 +52,7 @@ cdef extern from "shiva_wrapper.h":
     void *object_dealloc(Object *object)
     int window_add_object (Window *window, Object *object)
     int window_remove_object (Window *window, Object *object)
-    void window_set_bg(Window *window, float r, float g, float b)
+    void window_set_bg_color(Window *window, Color *bg_color)
     void get_mouse_pos(int *x, int *y)
 
     Object *make_group(float x, float y)
