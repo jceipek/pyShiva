@@ -92,7 +92,7 @@ cdef class Color:
             for i,v in enumerate(iter_value):
                 if i > 3:
                     raise IndexError("colors have 4 channels: r,g,b,a")
-                self.__setitem__(self, i, <float>v)
+                self.__setitem__(i, <float>v)
 
     def __getitem__(self, int index):
         if index == 0:
