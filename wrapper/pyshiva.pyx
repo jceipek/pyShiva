@@ -159,7 +159,7 @@ cdef class Entity:
         cpyshiva.object_dealloc(self._c_object)
 
 cdef class Group(Entity):
-    '''A Group
+    '''A Group that can contain entities and can be added to other groups and the window
 
     '''
     cdef dict _map_c_to_python
@@ -256,7 +256,35 @@ cdef class Shape(Entity):
      
     # Dealloc inherited from Entity
 
+cdef class Path(Shape):
+    '''An arbitrary path that can be added to groups and the window
 
+    '''
+    def __init__(self, float x=0, float y=0, color=None, stroke_color=(1,1,1,1), stroke_thickness=1.0):
+        Shape.__init__(self, x, y, color, stroke_color, stroke_thickness)
+
+    def add_line_to(self, float x, float y):
+        cpyshiva.path_add_line_to(self._c_object, x, y)
+
+    def close_path(self):
+        cpyshiva.path_close(self._c_object)
+
+    '''
+      Coordinates per command
+      0, /* VG_CLOSE_PATH */
+      2, /* VG_MOTE_TO */
+      2, /* VG_LINE_TO */
+      1, /* VG_HLINE_TO */
+      1, /* VG_VLINE_TO */
+      4, /* VG_QUAD_TO */
+      6, /* VG_CUBIC_TO */
+      2, /* VG_SQUAD_TO */
+      4, /* VG_SCUBIC_TO */
+      5, /* VG_SCCWARC_TO */
+      5, /* VG_SCWARC_TO */
+      5, /* VG_LCCWARC_TO */
+      5  /* VG_LCWARC_TO */
+    '''
 
 cdef class Rect(Shape):
     '''Rectangles are graphics primitives that can be added to windows and groups.

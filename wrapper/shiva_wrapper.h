@@ -88,6 +88,8 @@ int group_add_object (Object *group, Object *object);
 int group_remove_object (Object *group, Object *object);
 void *group_dealloc(Object *group);
 Object *make_shape(float x, float y, Color *fill, float stroke_width, Color *stroke);
+void path_add_line_to(Object *path, float x, float y);
+void path_close(Object *path);
 Object *make_rect_from_shape(Object *shape, float width, float height);
 Object *make_ellipse_from_shape(Object *shape, float width, float height);
 void shape_recolor(Object *shape, Color *fill);

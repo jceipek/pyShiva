@@ -1,4 +1,4 @@
-cdef extern from "shiva_wrapper.h":
+cdef extern from "../glfw-2.7.7/include/GL/glfw.h":
     double glfwGetTime()
 
 #Basically a header file for pyshiva.pyx
@@ -41,6 +41,8 @@ cdef extern from "shiva_wrapper.h":
 
     Object *make_object(float x, float y)
     Object *make_shape(float x, float y, Color *fill, float stroke_thickness, Color *stroke)
+    void path_add_line_to(Object *path, float x, float y)
+    void path_close(Object *path)
     Object *make_rect_from_shape(Object *shape, float width, float height)
     Object *make_ellipse_from_shape(Object *shape, float width, float height)
 

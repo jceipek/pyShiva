@@ -353,6 +353,23 @@ Object *make_shape(float x, float y, Color *fill, float stroke_thickness, Color 
 	return object;
 }
 
+void path_add_line_to(Object *path, float x, float y)
+{
+	VGPathAbsRel absrel = VG_ABSOLUTE;
+	VGubyte seg = VG_LINE_TO | absrel;
+	VGfloat data[2];
+
+	data[0] = x; data[1] = y;
+	vgAppendPathData(path->path_data, 1, &seg, data);
+}
+
+void path_close(Object *path)
+{
+  VGubyte seg = VG_CLOSE_PATH;
+  VGfloat data = 0.0f;
+  vgAppendPathData(path->path_data, 1, &seg, &data);
+}
+
 Object *make_rect_from_shape(Object *shape, float width, float height) {
 	vguRect(shape->path_data, 0, 0, width, height);
 	shape->type = OBJECT_RECT;
