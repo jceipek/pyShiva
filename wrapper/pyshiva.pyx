@@ -263,8 +263,17 @@ cdef class Path(Shape):
     def __init__(self, float x=0, float y=0, color=None, stroke_color=(1,1,1,1), stroke_thickness=1.0):
         Shape.__init__(self, x, y, color, stroke_color, stroke_thickness)
 
-    def add_line_to(self, float x, float y):
-        cpyshiva.path_add_line_to(self._c_object, x, y)
+    def add_line_to(self, float x, float y, is_absolute=True):
+        if is_absolute:
+            cpyshiva.path_add_line_to(self._c_object, x, y, cpyshiva.VG_ABSOLUTE)
+        else:
+            cpyshiva.path_add_line_to(self._c_object, x, y, cpyshiva.VG_RELATIVE)
+
+    def add_quad_to(self, float x1, float y1, float x2, float y2, is_absolute=True):
+        if is_absolute:
+            cpyshiva.path_add_quad_to(self._c_object, x1, y1, x2, y2, cpyshiva.VG_ABSOLUTE)
+        else:
+            cpyshiva.path_add_quad_to(self._c_object, x1, y1, x2, y2, cpyshiva.VG_RELATIVE)
 
     def close_path(self):
         cpyshiva.path_close(self._c_object)

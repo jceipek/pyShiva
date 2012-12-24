@@ -353,14 +353,93 @@ Object *make_shape(float x, float y, Color *fill, float stroke_thickness, Color 
 	return object;
 }
 
-void path_add_line_to(Object *path, float x, float y)
+void path_add_line_to(Object *path, float x, float y, VGPathAbsRel absrel)
 {
-	VGPathAbsRel absrel = VG_ABSOLUTE;
 	VGubyte seg = VG_LINE_TO | absrel;
 	VGfloat data[2];
 
 	data[0] = x; data[1] = y;
 	vgAppendPathData(path->path_data, 1, &seg, data);
+}
+
+void path_move_to(Object *path, float x, float y, VGPathAbsRel absrel)
+{
+  VGubyte seg = VG_MOVE_TO | absrel;
+  VGfloat data[2];
+  
+  data[0] = x; data[1] = y;
+  vgAppendPathData(path->path_data, 1, &seg, data);
+}
+
+void path_add_hline_to(Object *path, float x, VGPathAbsRel absrel)
+{
+  VGubyte seg = VG_HLINE_TO | absrel;
+  VGfloat data = x;
+  
+  vgAppendPathData(path->path_data, 1, &seg, &data);
+}
+
+void path_add_vline_to(Object *path, float y, VGPathAbsRel absrel)
+{
+  VGubyte seg = VG_VLINE_TO | absrel;
+  VGfloat data = y;
+  
+  vgAppendPathData(path->path_data, 1, &seg, &data);
+}
+
+void path_add_quad_to(Object *path, float x1, float y1, float x2, float y2,
+                VGPathAbsRel absrel)
+{
+  VGubyte seg = VG_QUAD_TO | absrel;
+  VGfloat data[4];
+  
+  data[0] = x1; data[1] = y1;
+  data[2] = x2; data[3] = y2;
+  vgAppendPathData(path->path_data, 1, &seg, data);
+}
+
+void path_add_cubic_to(Object *path, float x1, float y1, float x2, float y2, float x3, float y3,
+                 VGPathAbsRel absrel)
+{
+  VGubyte seg = VG_CUBIC_TO | absrel;
+  VGfloat data[6];
+  
+  data[0] = x1; data[1] = y1;
+  data[2] = x2; data[3] = y2;
+  data[4] = x3; data[5] = y3;
+  vgAppendPathData(path->path_data, 1, &seg, data);
+}
+
+void path_add_s_quad_to(Object *path, float x2, float y2,VGPathAbsRel absrel)
+{
+  VGubyte seg = VG_SQUAD_TO | absrel;
+  VGfloat data[2];
+  
+  data[0] = x2; data[1] = y2;
+  vgAppendPathData(path->path_data, 1, &seg, data);
+}
+
+void path_add_s_cubic_to(Object *path, float x2, float y2, float x3, float y3,
+                  VGPathAbsRel absrel)
+{
+  VGubyte seg = VG_SCUBIC_TO | absrel;
+  VGfloat data[4];
+  
+  data[0] = x2; data[1] = y2;
+  data[2] = x3; data[3] = y3;
+  vgAppendPathData(path->path_data, 1, &seg, data);
+}
+
+void path_add_arc_to(Object *path, float rx, float ry, float rot, float x, float y,
+               VGPathSegment type, VGPathAbsRel absrel)
+{
+  VGubyte seg = type | absrel;
+  VGfloat data[5];
+  
+  data[0] = rx; data[1] = ry;
+  data[2] = rot;
+  data[3] = x;  data[4] = y;
+  vgAppendPathData(path->path_data, 1, &seg, data);
 }
 
 void path_close(Object *path)

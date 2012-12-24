@@ -88,7 +88,19 @@ int group_add_object (Object *group, Object *object);
 int group_remove_object (Object *group, Object *object);
 void *group_dealloc(Object *group);
 Object *make_shape(float x, float y, Color *fill, float stroke_width, Color *stroke);
-void path_add_line_to(Object *path, float x, float y);
+void path_add_line_to(Object *path, float x, float y, VGPathAbsRel absrel);
+void path_move_to(Object *path, float x, float y, VGPathAbsRel absrel);
+void path_add_hline_to(Object *path, float x, VGPathAbsRel absrel);
+void path_add_vline_to(Object *path, float y, VGPathAbsRel absrel);
+void path_add_quad_to(Object *path, float x1, float y1, float x2, float y2,
+                VGPathAbsRel absrel);
+void path_add_cubic_to(Object *path, float x1, float y1, float x2, float y2, float x3, float y3,
+                 VGPathAbsRel absrel);
+void path_add_s_quad_to(Object *path, float x2, float y2,VGPathAbsRel absrel);
+void path_add_s_cubic_to(Object *path, float x2, float y2, float x3, float y3,
+                  VGPathAbsRel absrel);
+void path_add_arc_to(Object *path, float rx, float ry, float rot, float x, float y,
+               VGPathSegment type, VGPathAbsRel absrel);
 void path_close(Object *path);
 Object *make_rect_from_shape(Object *shape, float width, float height);
 Object *make_ellipse_from_shape(Object *shape, float width, float height);
