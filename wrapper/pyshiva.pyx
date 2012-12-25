@@ -256,27 +256,63 @@ cdef class Shape(Entity):
      
     # Dealloc inherited from Entity
 
+cdef class PathElement:
+    cdef public int _next_index
+    cdef Path _path_ptr
+    cdef str kind
+    cdef tuple coords
+    def __init__(self, kind, coords, next_index=None, path_ptr=None):
+        self._next_index = next_index
+        self.kind = kind
+        self.coords = coords
+        self._path_ptr = path_ptr
+
+    property x:
+        def __get__(self):
+            pass
+            #return self._height
+        def __set__(self, float value):
+            #self._height = value
+            #cpyshiva.rect_resize(self._c_object, self.width, value)
+            cpyshiva.path_modify_coord(self._path_ptr._c_object, self._next_index-2, value)
+            #cpyshiva.path_modify_coords(self._path_ptr._c_object, self._next_index-2, 1, <float **>[value])
+
 cdef class Path(Shape):
     '''An arbitrary path that can be added to groups and the window
 
+    Warning: Highly unstable and subject to change.
     '''
+    cdef _elements
     def __init__(self, float x=0, float y=0, color=None, stroke_color=(1,1,1,1), stroke_thickness=1.0):
         Shape.__init__(self, x, y, color, stroke_color, stroke_thickness)
+        self._elements = list()
+
+    cdef __get_next_index__(self):
+        if len(self._elements) == 0:
+            return 0
+        else:
+            return self._elements[-1]._next_index
 
     def add_line_to(self, float x, float y, is_absolute=True):
         if is_absolute:
             cpyshiva.path_add_line_to(self._c_object, x, y, cpyshiva.VG_ABSOLUTE)
         else:
             cpyshiva.path_add_line_to(self._c_object, x, y, cpyshiva.VG_RELATIVE)
+        self._elements.append(PathElement('Line', (x,y), self.__get_next_index__()+2, path_ptr=self))
+
 
     def add_quad_to(self, float x1, float y1, float x2, float y2, is_absolute=True):
         if is_absolute:
             cpyshiva.path_add_quad_to(self._c_object, x1, y1, x2, y2, cpyshiva.VG_ABSOLUTE)
         else:
             cpyshiva.path_add_quad_to(self._c_object, x1, y1, x2, y2, cpyshiva.VG_RELATIVE)
+        self._elements.append(PathElement('Quad', (x1,y1,x2,y2), self.__get_next_index__()+4, path_ptr=self))
 
-    def close_path(self):
+    def close(self):
         cpyshiva.path_close(self._c_object)
+
+    def __getitem__(self, int index):
+        return self._elements[index]
 
     '''
       Coordinates per command

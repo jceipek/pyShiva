@@ -57,6 +57,8 @@ cdef extern from "shiva_wrapper.h":
     void path_add_s_cubic_to(Object *path, float x2, float y2, float x3, float y3, VGPathAbsRel absrel)
     #void path_add_arc_to(Object *path, float rx, float ry, float rot, float x, float y, VGPathSegment type, VGPathAbsRel absrel)
     void path_close(Object *path)
+    void path_modify_coord(Object *path, int index, float new_coord_value)
+    void path_modify_coords(Object *path, int startIndex, int numSegments, void *data)
     Object *make_rect_from_shape(Object *shape, float width, float height)
     Object *make_ellipse_from_shape(Object *shape, float width, float height)
 

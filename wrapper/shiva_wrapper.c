@@ -449,6 +449,18 @@ void path_close(Object *path)
   vgAppendPathData(path->path_data, 1, &seg, &data);
 }
 
+void path_modify_coords(Object *path, int startIndex, int numSegments, void * data) {
+	vgModifyPathCoords(path->path_data, startIndex, numSegments, data);
+}
+
+void path_modify_coord(Object *path, int index, float new_coord_value) {
+	float data[2];
+	data[0] = new_coord_value;
+	data[1] = new_coord_value;
+	//vgModifyPathCoords(path->path_data, index, 1, data);
+	vgModifyPathCoords(path->path_data, 1, 1, data);
+}
+
 Object *make_rect_from_shape(Object *shape, float width, float height) {
 	vguRect(shape->path_data, 0, 0, width, height);
 	shape->type = OBJECT_RECT;
