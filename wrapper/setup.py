@@ -79,5 +79,5 @@ setup ( cmdclass = {'build_ext': build_ext},
 The PyShiva project is an experiment in bringing lightning fast high quality 
 2d graphics to python via the pyshiva module. It aims to provide a simple vector-based 
 API on top of the OpenGL-powered ShivaVG library.
-'''
+''',
         ext_modules = [pyshiva_module])
