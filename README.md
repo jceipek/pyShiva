@@ -1,7 +1,7 @@
 pyShiva
 =======
 
-The PyShiva project is an experiment in bringing lightning fast high quality 2d graphics to python via the `pyshiva` module.
+The pyShiva project is an experiment in bringing lightning fast high quality 2d graphics to python via the `pyshiva` module.
 It aims to provide a simple vector-based API on top of the OpenGL-powered ShivaVG library.
 
 ![Demo](https://raw.github.com/jceipek/pyShiva/master/screenshots/RoseCurves2.png "pyShiva Rose Curves")
@@ -45,17 +45,18 @@ This is how easy it is to write a complete pyShiva program!
 		w.refresh()
 
 
-Status
--------
+##Status
+
 Currently under heavy development.
 
 
-Full Documentation and Implementation Spec
--------------------------------------------
+##Full Documentation and Implementation Spec
+
 [Read it here](https://docs.google.com/document/d/1qF8y-nfQE38GGET-e_7vlTTwCGvvnqZUdMKl-cHi_js/edit). You can edit if if you are a collaborator.
 
-Compiling ShivaVG on Ubuntu
-----------------------------
+
+##Compiling ShivaVG and GLFW on Ubuntu
+
 	sudo apt-get install libx11-dev
 	sudo apt-get install mesa-common-dev
 	sudo apt-get install libglu1-mesa-dev
@@ -75,25 +76,45 @@ Compiling ShivaVG on Ubuntu
 	cmake .
 	make
 
-	cd ..
+##Building the python wrapper on Ubuntu
 
-	cd wrapper
-	make
-
-Building the python wrapper on Ubuntu
---------------------------------------
 Without this, you won't be able to run the python demos, make your own projects, or contribute to pyShiva's development.
 
 	sudo apt-get install python-dev
 	sudo apt-get install cython
 
 	cd wrapper
-	python setup.py build_ext --inplace
+	python setup.py install
 
 
-Testing the python wrapper
-------------------------------------
-This demo creates lots of bouncing colored squares.
+
+##Testing the python wrapper
+
+This demo creates animated circles in a flower-like arrangement.
 
 	cd wrapper
-	python many_objects_test.py
+	python rose_curves2.py
+
+
+##License: GNU Lesser General Public License
+
+Copyright (C) 2012 Julian Ceipek, Berit Johnson, Diana Vermilya, Charles Gwennap
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library in the file COPYING;
+if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+
+###Note
+
+pyShiva depends on and is distributed alongside several 3rd party libraries that are distributed with compatible licenses.
